@@ -1,0 +1,49 @@
+---
+# Optional, can be omitted
+# The log level. Can be overriden with cli arguments.
+# Default: info
+log_level: info
+
+# Optional, can be omitted
+# The server configuration.
+server:
+  # Optional, can be omitted
+  # The host to bind the server to.
+  # Default: 8080
+  port: 8080
+
+  # Optional, can be omitted
+  # The SSL configuration.
+  ssl:
+    # Optional, can be omitted
+    # Whether to enable SSL.
+    # Default: false
+    enabled: false
+
+    # Optional, can be omitted
+    # The path to the SSL certificate file.
+    cert: ""
+
+    # Optional, can be omitted
+    # The path to the SSL private key file.
+    key: ""
+
+# Required
+# The github app configuration.
+github:
+  # Required
+  # The app client ID. Is displayed when you go to your app under https://github.com/settings/apps/
+  client-id: ""
+
+  # Required
+  # The private keyfile for the app.
+  private-key: ""
+
+  # Optional, can be omitted
+  # The webhook secret shared with github. Is used to verify that the requests are coming from github.
+  webhook-secret: ""
+
+  # Optional, can be omitted
+  # The API URL for github.
+  # Default: https://api.github.com
+  api: "https://api.github.com"
