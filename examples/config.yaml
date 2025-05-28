@@ -2,7 +2,7 @@
 # Optional, can be omitted
 # The log level. Can be overriden with cli arguments.
 # Default: info
-log_level: info
+log-level: info
 
 # Optional, can be omitted
 # The server configuration.
@@ -11,6 +11,11 @@ server:
   # The host to bind the server to.
   # Default: 8080
   port: 8080
+
+  # Optional, can be omitted
+  # Environment variable: CERBERUS_WEBHOOK_SECRET
+  # The webhook secret shared with github. Is used to verify that the requests are coming from github.
+  webhook-secret: ""
 
   # Optional, can be omitted
   # The SSL configuration.
@@ -38,10 +43,6 @@ github:
   # Required
   # The private keyfile for the app.
   private-key: ""
-
-  # Optional, can be omitted
-  # The webhook secret shared with github. Is used to verify that the requests are coming from github.
-  webhook-secret: ""
 
   # Optional, can be omitted
   # The API URL for github.

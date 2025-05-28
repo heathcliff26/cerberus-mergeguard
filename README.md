@@ -6,8 +6,7 @@
 
 # cerberus-mergeguard
 
-#TODO
-This is a work in progress, commit history will be reset when finished
+This is a work in progress. (TODO: Update readme before release)
 
 ## Table of Contents
 
@@ -28,24 +27,22 @@ This is a work in progress, commit history will be reset when finished
 ### CLI Args
 ```
 $ cerberus-mergeguard help
-cerberus-mergeguard github bot for guarding pull request merges
+Guard PRs from merging until all triggered checks have passed
 
-Usage:
-  cerberus-mergeguard [flags]
-  cerberus-mergeguard [command]
+Usage: cerberus-mergeguard [OPTIONS] <COMMAND>
 
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  help        Help about any command
-  version     Print version information and exit
+Commands:
+  server   Run the bot and listen for webhook events on /webhook
+  create   Create a new pending status check for a commit
+  refresh  Refresh the state of the status check of a commit
+  status   Check the status of a commit
+  version  Print the version and exit
+  help     Print this message or the help of the given subcommand(s)
 
-Flags:
-  -c, --config string   Config file to use
-      --env             Expand enviroment variables in the config file
-  -h, --help            help for cerberus-mergeguard
-      --log string      Override the log level given in the config file
-
-Use "cerberus-mergeguard [command] --help" for more information about a command.
+Options:
+      --log <LOG>        Log level to use, overrides the level given in the config file
+  -c, --config <CONFIG>  Path to the config file [default: /config/config.yaml]
+  -h, --help             Print help
 ```
 
 ### Image location

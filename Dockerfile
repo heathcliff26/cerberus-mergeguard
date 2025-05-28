@@ -1,16 +1,14 @@
 ###############################################################################
 # BEGIN build-stage
 # Compile the binary
-FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.24.3 AS build-stage
-
-ARG BUILDPLATFORM
-ARG TARGETARCH
+FROM docker.io/library/rust:1.87.0 AS build-stage
 
 WORKDIR /app
 
-COPY . ./
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
 
-RUN GOOS=linux GOARCH="${TARGETARCH}" hack/build.sh
+RUN cargo build --release
 
 #
 # END build-stage
@@ -19,13 +17,15 @@ RUN GOOS=linux GOARCH="${TARGETARCH}" hack/build.sh
 ###############################################################################
 # BEGIN final-stage
 # Create final docker image
-FROM scratch AS final-stage
+FROM docker.io/library/debian:12.11-slim AS final-stage
 
-COPY --from=build-stage /app/bin/cerberus-mergeguard /cerberus-mergeguard
+COPY --from=build-stage /app/target/release/cerberus-mergeguard /cerberus-mergeguard
 
 USER 1001
 
 ENTRYPOINT ["/cerberus-mergeguard"]
+
+CMD ["server"]
 
 #
 # END final-stage

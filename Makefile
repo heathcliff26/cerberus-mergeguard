@@ -4,46 +4,33 @@ REPOSITORY ?= localhost
 CONTAINER_NAME ?= cerberus-mergeguard
 TAG ?= latest
 
-# Build the binary
-build:
-	hack/build.sh
+# Build the binary in release mode
+release:
+	cargo build --release
 
 # Build the container image
 image:
 	podman build -t $(REPOSITORY)/$(CONTAINER_NAME):$(TAG) .
 
-# Run unit-tests with race detection and coverage
+# Run cargo test
 test:
-	go test -v -race -coverprofile=coverprofile.out -coverpkg "./..." ./...
+	cargo test
 
-# Update project dependencies
-update-deps:
-	hack/update-deps.sh
-
-# Generate coverage profile
-coverprofile:
-	hack/coverprofile.sh
-
-# Run linter
+# Run linter (clippy)
 lint:
-	golangci-lint run -v
+	cargo clippy
 
 # Format the code
 fmt:
-	gofmt -s -w ./cmd ./pkg
+	cargo fmt
 
 # Validate that all generated files are up to date.
 validate:
 	hack/validate.sh
 
-
-# Scan code for vulnerabilities using gosec
-gosec:
-	gosec ./...
-
 # Clean up generated files
 clean:
-	rm -rf bin coverprofiles coverprofile.out
+	hack/clean.sh
 
 # Show this help message
 help:
@@ -54,15 +41,12 @@ help:
 	@echo "Run 'make <target>' to execute a specific target."
 
 .PHONY: \
-	build \
+	release \
 	image \
 	test \
-	update-deps \
-	coverprofile \
 	lint \
 	fmt \
 	validate \
-	gosec \
 	clean \
 	help \
 	$(NULL)
