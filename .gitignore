@@ -1,9 +1,6 @@
-# Ignore binaries
-/bin
+# Cargo build directory
+/target
 
 # Ignore files created for testing
 /test-*.yaml
-
-# Generated go-test coverage reports
-coverprofiles/
-coverprofile.out
+/*.pem
