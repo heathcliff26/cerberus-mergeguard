@@ -4,3 +4,6 @@
 # Ignore files created for testing
 /test-*.yaml
 /*.pem
+
+# Release build output
+/dist

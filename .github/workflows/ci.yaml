@@ -93,8 +93,17 @@ jobs:
       - validate
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+          - arch: arm64
     with:
       cmd: "make release"
+      artifact: "dist/cerberus-mergeguard-${{ matrix.arch }}"
+      artifact-name: "cerberus-mergeguard-${{ matrix.arch }}"
+      architecture: "${{ matrix.arch }}"
 
   build-image:
     uses: heathcliff26/ci/.github/workflows/build-container.yaml@main
