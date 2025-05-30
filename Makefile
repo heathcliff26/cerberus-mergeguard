@@ -20,6 +20,10 @@ test:
 lint:
 	cargo clippy
 
+# Build the docs, fail on warnings
+doc:
+	RUSTDOCFLAGS='--deny warnings' cargo doc --no-deps
+
 # Format the code
 fmt:
 	cargo fmt

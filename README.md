@@ -6,7 +6,7 @@
 
 # cerberus-mergeguard
 
-This is a work in progress. (TODO: Update readme before release)
+Combine having conditional workflows with automerging by requiring only the cerberus status check. The check will only succeed if all other checks have passed.
 
 ## Table of Contents
 
@@ -74,7 +74,7 @@ In order to create and update status checks, github requires an app. To create a
 5. Fill out all required fields
    - GitHub App name: The display name of your app, e.g. Cerberus Mergeguard
    - Homepage URL: URL to your Website
-   - Webhook URL: The URL where your bot is running, e.g. https://example.org/webhook
+   - Webhook URL: The URL where your bot is running, e.g. <https://example.org/webhook>
    - Webhook Secret: Optional create a random string to enter here, to verify that webhook requests are send by github
    - Permissions -> Repository permissions:
      - Checks: Read/Write
