@@ -6,7 +6,9 @@
 
 # cerberus-mergeguard
 
-Combine having conditional workflows with automerging by requiring only the cerberus status check. The check will only succeed if all other checks have passed.
+Use cerberus bot to combine conditional workflows in big monorepos with required status checks.
+
+Instead of having empty runs, crazy bash magic or other tricks, you only need to mark the "cerberus-mergeguard" status as required.
 
 ## Table of Contents
 
@@ -25,7 +27,7 @@ Combine having conditional workflows with automerging by requiring only the cerb
 ## Usage
 
 ### CLI Args
-```
+```ignore
 $ cerberus-mergeguard help
 Guard PRs from merging until all triggered checks have passed
 
@@ -96,7 +98,7 @@ Before you run the bot, copy both the [example configuration](examples/config.ya
 Afterwards ensure you fill out all required attributes in the configuration file. The example has descriptions of the values.
 
 Finally run the bot with
-```
+```ignore
 $ podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/cerberus-mergeguard:latest
 ```
 
