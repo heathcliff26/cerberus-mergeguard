@@ -1,5 +1,6 @@
 use crate::{types::*, version};
 use reqwest::{Client, header, header::HeaderMap, header::HeaderName, header::HeaderValue};
+use std::error::Error;
 use tracing::{debug, info};
 
 /// Get an installation token for the GitHub App.
@@ -133,10 +134,7 @@ fn new_client_with_common_headers(token: &str) -> Result<Client, String> {
 }
 
 async fn send_request(builder: reqwest::RequestBuilder) -> Result<reqwest::Response, String> {
-    let response = builder
-        .send()
-        .await
-        .map_err(|e| format!("Failed to send request: {e}"))?;
+    let response = builder.send().await.map_err(|e| full_error_stack(&e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -156,4 +154,13 @@ async fn receive_body(response: reqwest::Response) -> Result<String, String> {
         .text()
         .await
         .map_err(|e| format!("Failed to read response body: {e}"))
+}
+
+fn full_error_stack(mut e: &dyn Error) -> String {
+    let mut s = format!("{e}");
+    while let Some(src) = e.source() {
+        s.push_str(&format!(": {}", src));
+        e = src;
+    }
+    s
 }
