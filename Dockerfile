@@ -8,6 +8,9 @@ WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
+# Needed as we include it for docs.
+RUN touch README.md
+
 RUN cargo build --release
 
 #

@@ -49,11 +49,20 @@ on:
     branches: ["main"]
 
 jobs:
+  doc:
+    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+    permissions:
+      contents: read
+    with:
+      cmd: "make doc"
+
   build-image:
     uses: heathcliff26/ci/.github/workflows/build-container.yaml@main
     permissions:
       contents: read
       packages: write
+    needs:
+      - doc
     with:
       dockerfile: Dockerfile
       tag: "${{ inputs.tag == '' && 'rolling' || inputs.tag }}"
