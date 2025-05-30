@@ -34,6 +34,7 @@ impl ClientOptions {
     }
 }
 
+#[derive(Clone)]
 pub struct Client {
     client_id: String,
     key: jsonwebtoken::EncodingKey,

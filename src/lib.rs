@@ -40,8 +40,8 @@ impl App {
 
         match self.command {
             Command::Server => {
-                // TODO: Implement server functionality
-                let _: bool = std::future::pending().await;
+                let server = server::Server::new(config.server);
+                server.run(client).await?;
             }
             Command::Create { cli_opts } => {
                 return client
