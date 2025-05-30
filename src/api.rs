@@ -122,7 +122,8 @@ fn new_client_with_common_headers(token: &str) -> Result<Client, String> {
     headers.insert(header::USER_AGENT, HeaderValue::from_static(version::NAME));
     if !token.is_empty() {
         let bearer = format!("Bearer {token}");
-        let bearer = HeaderValue::from_str(&bearer).map_err(|_| format!("Invalid bearer token"))?;
+        let bearer =
+            HeaderValue::from_str(&bearer).map_err(|_| "Invalid bearer token".to_string())?;
         headers.insert(header::AUTHORIZATION, bearer);
     }
     Client::builder()

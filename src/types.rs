@@ -94,16 +94,16 @@ fn is_zero(value: &u64) -> bool {
 impl CheckRun {
     /// Create a new check-run for the given commit.
     pub fn new(commit: &str) -> Self {
-        let mut check_run = Self::default();
-        check_run.name = CHECK_RUN_NAME.to_string();
-        check_run.head_sha = commit.to_string();
-        check_run.status = CHECK_RUN_INITIAL_STATUS.to_string();
-        check_run.output = Some(CheckRunOutput {
-            title: Some(CHECK_RUN_TITLE.to_string()),
-            summary: Some(CHECK_RUN_SUMMARY.to_string()),
-        });
-
-        check_run
+        CheckRun {
+            name: CHECK_RUN_NAME.to_string(),
+            head_sha: commit.to_string(),
+            status: CHECK_RUN_INITIAL_STATUS.to_string(),
+            output: Some(CheckRunOutput {
+                title: Some(CHECK_RUN_TITLE.to_string()),
+                summary: Some(CHECK_RUN_SUMMARY.to_string()),
+            }),
+            ..Default::default()
+        }
     }
     /// Update the status based on the success flag.
     pub fn update_status(&mut self, success: bool) {
