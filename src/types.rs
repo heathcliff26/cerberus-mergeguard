@@ -66,7 +66,6 @@ pub struct Repo {
     pub id: u64,
     pub name: String,
     pub full_name: String,
-    pub url: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]

@@ -11,6 +11,9 @@ use tokio::signal;
 use tower_http::trace::TraceLayer;
 use tracing::{debug, error, info, warn};
 
+#[cfg(test)]
+mod test;
+
 pub const SERVER_STATUS_OK: &str = "ok";
 pub const SERVER_STATUS_ERROR: &str = "error";
 pub const SERVER_MESSAGE_OK: &str = "Server is running fine";
@@ -266,6 +269,15 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
             );
         }
     };
+
+    if payload
+        .check_run
+        .app
+        .is_none_or(|app| app.client_id == client.client_id())
+    {
+        debug!("Ignoring check_run event from our own app");
+        return (StatusCode::OK, Json(Response::new()));
+    }
 
     let app_id = match payload.installation {
         Some(installation) => installation.id,

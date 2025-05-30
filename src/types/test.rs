@@ -21,10 +21,22 @@ fn parse_check_runs() {
 fn parse_pull_request_event() {
     let test_body = include_str!("testdata/pr-synchronize.json");
 
-    let pr_event: PullRequestEvent = match serde_json::from_str(test_body) {
+    let event: PullRequestEvent = match serde_json::from_str(test_body) {
         Ok(check_runs) => check_runs,
         Err(e) => panic!("Failed to parse pull_request event: {e}"),
     };
 
-    assert_eq!("synchronize", pr_event.action);
+    assert_eq!("synchronize", event.action);
+}
+
+#[test]
+fn parse_check_run_event() {
+    let test_body = include_str!("testdata/own-check-run-event.json");
+
+    let event: CheckRunEvent = match serde_json::from_str(test_body) {
+        Ok(check_runs) => check_runs,
+        Err(e) => panic!("Failed to parse check_run event: {e}"),
+    };
+
+    assert_eq!("completed", event.action);
 }

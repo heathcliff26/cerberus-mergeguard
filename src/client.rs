@@ -56,6 +56,11 @@ impl Client {
         })
     }
 
+    /// Return a reference to the client ID.
+    pub fn client_id(&self) -> &str {
+        &self.client_id
+    }
+
     /// Create a new pending check run for a commit in a repository.
     /// Needs to use the GitHub App installation token to authenticate.
     pub async fn create_check_run(
@@ -203,6 +208,17 @@ impl Client {
             }
         }
         (uncompleted, own_check_run)
+    }
+
+    #[cfg(test)]
+    pub fn new_for_testing(client_id: &str, secret: &str, api: &str) -> Self {
+        let key = jsonwebtoken::EncodingKey::from_secret(secret.as_bytes());
+
+        Client {
+            client_id: client_id.to_string(),
+            key,
+            api: api.to_string(),
+        }
     }
 }
 

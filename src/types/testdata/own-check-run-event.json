@@ -1,0 +1,38 @@
+{
+  "action": "completed",
+  "check_run": {
+    "id": 43192137255,
+    "name": "cerberus-mergeguard",
+    "head_sha": "253f31d91db3a05dcf75c0e8135309491fed8669",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2025-05-30T14:28:11Z",
+    "completed_at": "2025-05-30T14:29:17Z",
+    "output": {
+      "title": "Waiting for other checks to complete",
+      "summary": "Will block merging until all other checks have completed"
+    },
+    "app": {
+      "id": 1329963,
+      "client_id": "test-client-id",
+      "slug": "cerberus-mergeguard",
+      "owner": {
+        "login": "heathcliff26",
+        "id": 21662658
+      },
+      "name": "Cerberus Mergeguard"
+    }
+  },
+  "repository": {
+    "id": 686595501,
+    "name": "containers",
+    "full_name": "heathcliff26/containers"
+  },
+  "sender": {
+    "login": "bot-ahsoka[bot]",
+    "id": 143866472
+  },
+  "installation": {
+    "id": 68583790
+  }
+}
