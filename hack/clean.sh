@@ -2,7 +2,7 @@
 
 set -e
 
-base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath)/.."
+base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath | xargs dirname)"
 
 folders=("target" "dist")
 files=()

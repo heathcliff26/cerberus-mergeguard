@@ -20,6 +20,10 @@ run-image: image
 test:
 	cargo test
 
+# Generate coverage profile
+coverprofile:
+	hack/coverprofile.sh
+
 # Run linter (clippy)
 lint:
 	cargo clippy -- --deny warnings
@@ -53,6 +57,7 @@ help:
 	image \
 	run-image \
 	test \
+	coverprofile \
 	lint \
 	doc \
 	fmt \
