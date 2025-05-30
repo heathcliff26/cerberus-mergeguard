@@ -12,6 +12,10 @@ release:
 image:
 	podman build -t $(REPOSITORY)/$(CONTAINER_NAME):$(TAG) .
 
+# Run the container image
+run-image: image
+	podman run --rm -it --name $(CONTAINER_NAME) -p 8080:8080 -v $(PWD):/config:z $(REPOSITORY)/$(CONTAINER_NAME):$(TAG) server -c test-config.yaml
+
 # Run cargo test
 test:
 	cargo test
@@ -47,8 +51,10 @@ help:
 .PHONY: \
 	release \
 	image \
+	run-image \
 	test \
 	lint \
+	doc \
 	fmt \
 	validate \
 	clean \
