@@ -111,16 +111,14 @@ impl CheckRun {
         if success {
             self.status = CHECK_RUN_COMPLETED_STATUS.to_string();
             self.conclusion = Some(CHECK_RUN_CONCLUSION.to_string());
-            if let Some(mut output) = self.output.take() {
+            if let Some(output) = &mut self.output {
                 output.title = Some(CHECK_RUN_COMPLETED_TITLE.to_string());
-                self.output = Some(output);
             }
         } else {
             self.status = CHECK_RUN_INITIAL_STATUS.to_string();
             self.conclusion = None;
-            if let Some(mut output) = self.output.take() {
+            if let Some(output) = &mut self.output {
                 output.title = Some(CHECK_RUN_INITIAL_TITLE.to_string());
-                self.output = Some(output);
             }
         }
     }
