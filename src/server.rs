@@ -41,7 +41,7 @@ impl Default for ServerOptions {
 }
 
 /// SSL configuration for the server
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(default)]
 pub struct SSLOptions {
     /// Whether to enable SSL, defaults to false
@@ -62,15 +62,5 @@ impl SSLOptions {
             return Err("Incomplete SSL configuration: cert and key must be set if SSL is enabled");
         }
         Ok(())
-    }
-}
-
-impl Default for SSLOptions {
-    fn default() -> Self {
-        Self {
-            enabled: bool::default(),
-            key: String::default(),
-            cert: String::default(),
-        }
     }
 }
