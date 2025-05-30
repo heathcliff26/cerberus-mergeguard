@@ -22,7 +22,8 @@ Instead of having empty runs, crazy bash magic or other tricks, you only need to
     - [Creating a github app](#creating-a-github-app)
     - [Installing your app](#installing-your-app)
     - [Running the bot](#running-the-bot)
-- [Credits](#credits)
+    - [(Optional) Installing binary in CLI](#optional-installing-binary-in-cli)
+  - [Credits](#credits)
 
 ## Usage
 
@@ -49,10 +50,10 @@ Options:
 
 ### Image location
 
-| Container Registry                                                                                     | Image                                      |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| Container Registry                                                                                       | Image                                        |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | [Github Container](https://github.com/users/heathcliff26/packages/container/package/cerberus-mergeguard) | `ghcr.io/heathcliff26/cerberus-mergeguard`   |
-| [Docker Hub](https://hub.docker.com/r/heathcliff26/cerberus-mergeguard)                  | `docker.io/heathcliff26/cerberus-mergeguard` |
+| [Docker Hub](https://hub.docker.com/r/heathcliff26/cerberus-mergeguard)                                  | `docker.io/heathcliff26/cerberus-mergeguard` |
 
 ### Tags
 
@@ -102,6 +103,12 @@ Finally run the bot with
 $ podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/cerberus-mergeguard:latest
 ```
 
-# Credits
+### (Optional) Installing binary in CLI
+
+You can download the latest binary from the [releases](https://github.com/heathcliff26/cerberus-mergeguard/releases/latest).
+
+Alternatively you can use cargo with `cargo install cerberus-mergeguard`.
+
+## Credits
 
 The avatar picture has been created with Google Gemini.
