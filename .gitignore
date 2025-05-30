@@ -1,0 +1,12 @@
+# Cargo build directory
+/target
+
+# Ignore files created for testing
+/test-*.yaml
+/*.pem
+
+# Release build output
+/dist
+
+# Test coverage report
+/*.profraw
