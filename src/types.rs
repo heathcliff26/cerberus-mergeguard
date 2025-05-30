@@ -7,7 +7,8 @@ pub const CHECK_RUN_NAME: &str = "cerberus-mergeguard";
 pub const CHECK_RUN_INITIAL_STATUS: &str = "queued";
 pub const CHECK_RUN_COMPLETED_STATUS: &str = "completed";
 pub const CHECK_RUN_CONCLUSION: &str = "success";
-pub const CHECK_RUN_TITLE: &str = "Waiting for other checks to complete";
+pub const CHECK_RUN_INITIAL_TITLE: &str = "Waiting for other checks to complete";
+pub const CHECK_RUN_COMPLETED_TITLE: &str = "All status checks have passed";
 pub const CHECK_RUN_SUMMARY: &str = "Will block merging until all other checks have completed";
 
 /// Represents a GitHub webhook event for pull requests.
@@ -99,7 +100,7 @@ impl CheckRun {
             head_sha: commit.to_string(),
             status: CHECK_RUN_INITIAL_STATUS.to_string(),
             output: Some(CheckRunOutput {
-                title: Some(CHECK_RUN_TITLE.to_string()),
+                title: Some(CHECK_RUN_INITIAL_TITLE.to_string()),
                 summary: Some(CHECK_RUN_SUMMARY.to_string()),
             }),
             ..Default::default()
@@ -110,9 +111,17 @@ impl CheckRun {
         if success {
             self.status = CHECK_RUN_COMPLETED_STATUS.to_string();
             self.conclusion = Some(CHECK_RUN_CONCLUSION.to_string());
+            if let Some(mut output) = self.output.take() {
+                output.title = Some(CHECK_RUN_COMPLETED_TITLE.to_string());
+                self.output = Some(output);
+            }
         } else {
             self.status = CHECK_RUN_INITIAL_STATUS.to_string();
             self.conclusion = None;
+            if let Some(mut output) = self.output.take() {
+                output.title = Some(CHECK_RUN_INITIAL_TITLE.to_string());
+                self.output = Some(output);
+            }
         }
     }
 }
