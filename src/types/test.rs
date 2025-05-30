@@ -40,3 +40,52 @@ fn parse_check_run_event() {
 
     assert_eq!("completed", event.action);
 }
+
+#[test]
+fn check_run_new() {
+    let run = CheckRun::new("test-sha");
+
+    assert_eq!("test-sha", run.head_sha);
+
+    check_run_assert_initial_fields(&run);
+}
+
+fn check_run_assert_initial_fields(run: &CheckRun) {
+    assert_eq!(CHECK_RUN_NAME, run.name);
+    assert_eq!(CHECK_RUN_INITIAL_STATUS, run.status);
+    let output = run.output.as_ref().expect("Should have output");
+    assert_eq!(
+        CHECK_RUN_INITIAL_TITLE,
+        output.title.as_ref().expect("Should have title")
+    );
+    assert_eq!(
+        CHECK_RUN_SUMMARY,
+        output.summary.as_ref().expect("Should have summary")
+    );
+    assert!(run.conclusion.is_none(), "Conclusion should be None");
+}
+
+#[test]
+fn check_run_update_status() {
+    let mut run = CheckRun::new("test-sha");
+
+    run.update_status(true);
+    assert_eq!(CHECK_RUN_NAME, run.name);
+    assert_eq!(CHECK_RUN_COMPLETED_STATUS, run.status);
+    assert_eq!(
+        CHECK_RUN_CONCLUSION,
+        run.conclusion.as_ref().expect("Should have conclusion")
+    );
+    let output = run.output.as_ref().expect("Should have output");
+    assert_eq!(
+        CHECK_RUN_COMPLETED_TITLE,
+        output.title.as_ref().expect("Should have title")
+    );
+    assert_eq!(
+        CHECK_RUN_SUMMARY,
+        output.summary.as_ref().expect("Should have summary")
+    );
+
+    run.update_status(false);
+    check_run_assert_initial_fields(&run);
+}
