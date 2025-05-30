@@ -2,7 +2,7 @@
 
 set -e
 
-base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath)/.."
+base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath | xargs dirname)"
 
 bin_dir="${base_dir}/dist"
 name="$(yq -r '.package.name' "${base_dir}/Cargo.toml")"
