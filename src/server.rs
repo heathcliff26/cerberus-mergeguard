@@ -112,11 +112,15 @@ impl Server {
         // TODO: Convert strings to &str where possible to avoid unnecessary allocations
         let state = ServerState::new(self.options.webhook_secret.clone(), github);
 
-        let router: Router = Router::new()
-            .route("/healthz", get(healthz))
+        let webhook_router: Router = Router::new()
             .route("/webhook", post(webhook_handler))
             .with_state(state)
             .layer(TraceLayer::new_for_http());
+
+        // Do not use tracing for the health check endpoint
+        let health_router: Router = Router::new().route("/healthz", get(healthz));
+
+        let router: Router = Router::new().merge(webhook_router).merge(health_router);
 
         let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], self.options.port));
         info!("Starting server on {}", addr);
