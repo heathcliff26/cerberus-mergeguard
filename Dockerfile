@@ -24,6 +24,13 @@ FROM docker.io/library/debian:12.11-slim AS final-stage
 
 COPY --from=build-stage /app/target/release/cerberus-mergeguard /cerberus-mergeguard
 
+WORKDIR /config
+RUN apt-get update -y \
+  && apt-get install -y --no-install-recommends openssl \
+  && apt-get autoremove -y \
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/*
+
 USER 1001
 
 ENTRYPOINT ["/cerberus-mergeguard"]
