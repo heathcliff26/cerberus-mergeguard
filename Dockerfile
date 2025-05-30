@@ -26,7 +26,7 @@ COPY --from=build-stage /app/target/release/cerberus-mergeguard /cerberus-mergeg
 
 WORKDIR /config
 RUN apt-get update -y \
-  && apt-get install -y --no-install-recommends openssl \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
   && apt-get autoremove -y \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
