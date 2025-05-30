@@ -18,7 +18,7 @@ test:
 
 # Run linter (clippy)
 lint:
-	cargo clippy
+	cargo clippy -- --deny warnings
 
 # Build the docs, fail on warnings
 doc:
