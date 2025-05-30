@@ -6,7 +6,7 @@ TAG ?= latest
 
 # Build the binary in release mode
 release:
-	cargo build --release
+	hack/build-release.sh
 
 # Build the container image
 image:
