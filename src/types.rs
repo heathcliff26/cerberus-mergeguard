@@ -54,6 +54,7 @@ pub struct User {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BranchRef {
     pub label: String,
+    #[serde(rename = "ref")]
     pub ref_field: String,
     pub sha: String,
     pub user: User,
@@ -137,10 +138,6 @@ pub struct App {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Installation {
     pub id: u64,
-    pub account: User,
-    pub app_id: u64,
-    pub target_id: u64,
-    pub target_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

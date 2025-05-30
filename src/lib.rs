@@ -53,7 +53,7 @@ impl App {
                     .await;
             }
             Command::Refresh { cli_opts } => {
-                let (uncompleted, mut own_run) = get_and_print_status(&cli_opts, &client).await?;
+                let (uncompleted, own_run) = get_and_print_status(&cli_opts, &client).await?;
                 if uncompleted == 0 {
                     println!("All check runs are completed, setting check-run to 'completed'");
                 }
@@ -66,7 +66,7 @@ impl App {
                         &cli_opts.repo,
                         &cli_opts.commit,
                         uncompleted == 0,
-                        &mut own_run,
+                        own_run,
                     )
                     .await?;
                 println!("Updated PR status");
@@ -151,20 +151,13 @@ async fn get_and_print_status(
     cli_opts: &CLIOptions,
     client: &client::Client,
 ) -> Result<(u32, Option<types::CheckRun>), String> {
-    let checks = client
-        .get_check_runs(
+    let (count, own_run) = client
+        .get_check_run_status(
             cli_opts.app_installation_id,
             &cli_opts.repo,
             &cli_opts.commit,
         )
         .await?;
-    println!(
-        "Found {} check runs for commit '{}' in repo '{}':",
-        checks.len(),
-        cli_opts.commit,
-        cli_opts.repo
-    );
-    let (count, own_run) = client.overall_check_status(checks.as_slice());
     println!("Waiting on '{count}' check runs to complete");
     if let Some(own_run) = own_run.clone() {
         println!(

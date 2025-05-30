@@ -55,29 +55,7 @@ impl Client {
             api: options.api,
         })
     }
-    /// Get an installations token for the GitHub App.
-    async fn get_token(&self, app_installation_id: u64) -> Result<String, String> {
-        let claims = JWTClaims::new(&self.client_id);
-        let header = jsonwebtoken::Header::new(jsonwebtoken::Algorithm::RS256);
-        let jwt = jsonwebtoken::encode(&header, &claims, &self.key)
-            .map_err(|e| format!("Failed to create JWT token: {e}"))?;
-        api::get_installation_token(&self.api, &jwt, app_installation_id).await
-    }
-    /// Return a list of current check runs for a commit in a repository.
-    /// Needs to use the GitHub App installation token to authenticate.
-    pub async fn get_check_runs(
-        &self,
-        app_installation_id: u64,
-        repo: &str,
-        commit: &str,
-    ) -> Result<Vec<CheckRun>, String> {
-        let token = self
-            .get_token(app_installation_id)
-            .await
-            .map_err(|e| format!("Failed to get token: {e}"))?;
 
-        api::get_check_runs(&self.api, &token, repo, commit).await
-    }
     /// Create a new pending check run for a commit in a repository.
     /// Needs to use the GitHub App installation token to authenticate.
     pub async fn create_check_run(
@@ -93,9 +71,84 @@ impl Client {
 
         api::create_check_run(&self.api, &token, repo, &CheckRun::new(commit)).await
     }
+
+    /// Get the combined status of all check-runs for a commit.
+    pub async fn get_check_run_status(
+        &self,
+        app_installation_id: u64,
+        repo: &str,
+        commit: &str,
+    ) -> Result<(u32, Option<CheckRun>), String> {
+        let check_runs = self
+            .get_check_runs(app_installation_id, repo, commit)
+            .await
+            .map_err(|e| format!("Failed to get check runs: {e}"))?;
+        debug!(
+            "Found {} check runs for commit '{}' in repository '{}'",
+            check_runs.len(),
+            commit,
+            repo
+        );
+
+        Ok(self.overall_check_status(&check_runs))
+    }
+
+    /// Update the status of the check-run if necessary.
+    pub async fn update_check_run(
+        &self,
+        app_installation_id: u64,
+        repo: &str,
+        commit: &str,
+        success: bool,
+        check_run: Option<CheckRun>,
+    ) -> Result<(), String> {
+        let token = self
+            .get_token(app_installation_id)
+            .await
+            .map_err(|e| format!("Failed to get token: {e}"))?;
+
+        match check_run {
+            Some(mut run) => {
+                run.update_status(success);
+                api::update_check_run(&self.api, &token, repo, &run).await
+            }
+            None => {
+                warn!("No check run found to update, creating a new one");
+                let mut run = CheckRun::new(commit);
+                run.update_status(success);
+                api::create_check_run(&self.api, &token, repo, &run).await
+            }
+        }
+    }
+
+    /// Get an installations token for the GitHub App.
+    async fn get_token(&self, app_installation_id: u64) -> Result<String, String> {
+        let claims = JWTClaims::new(&self.client_id);
+        let header = jsonwebtoken::Header::new(jsonwebtoken::Algorithm::RS256);
+        let jwt = jsonwebtoken::encode(&header, &claims, &self.key)
+            .map_err(|e| format!("Failed to create JWT token: {e}"))?;
+        api::get_installation_token(&self.api, &jwt, app_installation_id).await
+    }
+
+    /// Return a list of current check runs for a commit in a repository.
+    /// Needs to use the GitHub App installation token to authenticate.
+    async fn get_check_runs(
+        &self,
+        app_installation_id: u64,
+        repo: &str,
+        commit: &str,
+    ) -> Result<Vec<CheckRun>, String> {
+        let token = self
+            .get_token(app_installation_id)
+            .await
+            .map_err(|e| format!("Failed to get token: {e}"))?;
+
+        api::get_check_runs(&self.api, &token, repo, commit).await
+    }
+
     /// Check a collection of check runs and returns the number of uncompleted check runs.
     /// Additionally returns the check run created by this app. If there are multiple check-runs, the first will be returned.
-    pub fn overall_check_status(&self, check_runs: &[CheckRun]) -> (u32, Option<CheckRun>) {
+    fn overall_check_status(&self, check_runs: &[CheckRun]) -> (u32, Option<CheckRun>) {
         if check_runs.is_empty() {
             warn!("Received empty check-runs list");
             return (0, None);
@@ -150,33 +203,6 @@ impl Client {
             }
         }
         (uncompleted, own_check_run)
-    }
-    /// Update the status of the check-run if necessary.
-    pub async fn update_check_run(
-        &self,
-        app_installation_id: u64,
-        repo: &str,
-        commit: &str,
-        success: bool,
-        check_run: &mut Option<CheckRun>,
-    ) -> Result<(), String> {
-        let token = self
-            .get_token(app_installation_id)
-            .await
-            .map_err(|e| format!("Failed to get token: {e}"))?;
-
-        match check_run.as_mut() {
-            Some(run) => {
-                run.update_status(success);
-                api::update_check_run(&self.api, &token, repo, run).await
-            }
-            None => {
-                warn!("No check run found to update, creating a new one");
-                let mut run = CheckRun::new(commit);
-                run.update_status(success);
-                api::create_check_run(&self.api, &token, repo, &run).await
-            }
-        }
     }
 }
 

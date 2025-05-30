@@ -16,3 +16,15 @@ fn parse_check_runs() {
         check_runs.check_runs[0].head_sha
     );
 }
+
+#[test]
+fn parse_pull_request_event() {
+    let test_body = include_str!("testdata/pr-synchronize.json");
+
+    let pr_event: PullRequestEvent = match serde_json::from_str(test_body) {
+        Ok(check_runs) => check_runs,
+        Err(e) => panic!("Failed to parse pull_request event: {e}"),
+    };
+
+    assert_eq!("synchronize", pr_event.action);
+}
