@@ -5,12 +5,14 @@ use axum::{
     http::{HeaderMap, HeaderValue, StatusCode},
     routing::{get, post},
 };
+use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use tokio::signal;
 use tower_http::trace::TraceLayer;
 use tracing::{debug, error, info, warn};
 
+mod hex;
 #[cfg(test)]
 mod test;
 
@@ -189,18 +191,54 @@ async fn webhook_handler(
 fn verify_webhook(
     signature: Option<&HeaderValue>,
     secret: Option<&str>,
-    _payload: &str,
+    payload: &str,
 ) -> Result<(), (StatusCode, Json<Response>)> {
-    if secret.is_none() {
-        return Ok(());
-    }
-    if signature.is_none() {
-        return Err((
+    let secret = match secret {
+        Some(s) => s,
+        None => {
+            return Ok(());
+        }
+    };
+
+    let signature = match signature {
+        Some(s) => s.to_str().map_err(|e| {
+            info!("Failed to read X-Hub-Signature-256 header: {e}");
+            (
+                StatusCode::FORBIDDEN,
+                Json(Response::error("Invalid X-Hub-Signature-256 header")),
+            )
+        })?,
+        None => {
+            return Err((
+                StatusCode::FORBIDDEN,
+                Json(Response::error("Missing X-Hub-Signature-256 header")),
+            ));
+        }
+    };
+    let signature = signature.strip_prefix("sha256=").unwrap_or(signature);
+    let signature = hex::decode_hex(signature).map_err(|_| {
+        (
             StatusCode::FORBIDDEN,
-            Json(Response::error("Missing X-Hub-Signature-256 header")),
-        ));
-    }
-    // TODO: Implement actual signature verification logic
+            Json(Response::error("Invalid X-Hub-Signature-256 header")),
+        )
+    })?;
+
+    let mut mac = Hmac::<sha2::Sha256>::new_from_slice(secret.as_bytes()).map_err(|e| {
+        error!("Failed to create HMAC from secret: {e}");
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(Response::error("Failed to create HMAC from secret")),
+        )
+    })?;
+    mac.update(payload.as_bytes());
+
+    mac.verify_slice(signature.as_slice()).map_err(|_| {
+        (
+            StatusCode::FORBIDDEN,
+            Json(Response::error("Invalid webhook signature")),
+        )
+    })?;
+
     Ok(())
 }
 
