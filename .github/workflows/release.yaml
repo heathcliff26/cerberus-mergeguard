@@ -1,0 +1,86 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      draft:
+        description: "Create draft release"
+        type: boolean
+        default: true
+      update:
+        description: "Update existing release"
+        type: boolean
+        default: false
+      tag:
+        description: "Release tag to use"
+        type: string
+        required: true
+      latest:
+        description: "Tag container as latest"
+        type: boolean
+        default: true
+      prerelease:
+        description: "Mark the release as a prerelease"
+        type: boolean
+        default: false
+
+jobs:
+  preflight:
+    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+    permissions:
+      contents: read
+    with:
+      cmd: |
+        set -e
+        version="v$(yq -r '.package.version' Cargo.toml)"
+        if [[ "${{ inputs.tag }}" != "${version}" ]]; then
+          echo "Tag '${{ inputs.tag }}' does not match version '${version}' in Cargo.toml"
+          exit 1
+        fi
+
+  tag:
+    uses: heathcliff26/ci/.github/workflows/tag.yaml@main
+    needs: preflight
+    permissions:
+      contents: write
+    with:
+      tag: ${{ inputs.tag }}
+      overwrite: ${{ inputs.update }}
+    secrets: inherit
+
+  build:
+    uses: ./.github/workflows/ci.yaml
+    needs: tag
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    with:
+      tag: ${{ inputs.tag }}
+      latest: ${{ inputs.latest }}
+    secrets: inherit
+
+  release:
+    uses: heathcliff26/ci/.github/workflows/release.yaml@main
+    needs: build
+    permissions:
+      contents: write
+    with:
+      draft: ${{ inputs.draft }}
+      update: ${{ inputs.update }}
+      tag: ${{ inputs.tag }}
+      release-artifacts: "release/*"
+      artifacts: "cerberus-mergeguard-*"
+      prerelease: ${{ inputs.prerelease }}
+
+  publish-crate:
+    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+    if: ${{ inputs.draft == false && inputs.update == false }}
+    needs: build
+    permissions:
+      contents: read
+    with:
+      cmd: |
+        echo '${{ secrets.CRATES_IO_API_TOKEN }}' | cargo login
+        cargo publish
