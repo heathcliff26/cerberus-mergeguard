@@ -13,11 +13,13 @@ mod version;
 #[derive(Debug, Parser)]
 #[clap(disable_version_flag = true)]
 pub struct App {
+    /// Global cli options
     #[clap(flatten)]
-    global_opts: GlobalOpts,
+    pub global_opts: GlobalOpts,
 
+    /// The subcommand to run
     #[clap(subcommand)]
-    command: Command,
+    pub command: Command,
 }
 
 impl App {
@@ -82,6 +84,7 @@ impl App {
     }
 }
 
+/// The available subcommands.
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Run the bot and listen for webhook events on /webhook
@@ -106,6 +109,7 @@ pub enum Command {
 }
 
 // TODO: Consider testing the env option of clap
+/// Gobal cli options used by all commands (except `version`).
 #[derive(Debug, Args)]
 pub struct GlobalOpts {
     /// Log level to use, overrides the level given in the config file
@@ -117,6 +121,7 @@ pub struct GlobalOpts {
     pub config: String,
 }
 
+/// Addtional cli options used by the local client commands like `create`, `refresh`, and `status`.
 #[derive(Debug, Args)]
 pub struct CLIOptions {
     /// Github App installation ID
