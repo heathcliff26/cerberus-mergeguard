@@ -197,6 +197,8 @@ dependencies = [
  "axum",
  "clap",
  "hmac",
+ "hyper",
+ "hyper-util",
  "jsonwebtoken",
  "reqwest",
  "serde",
@@ -204,7 +206,9 @@ dependencies = [
  "serde_yaml",
  "sha2",
  "tokio",
+ "tokio-native-tls",
  "tower-http",
+ "tower-service",
  "tracing",
  "tracing-subscriber",
 ]
