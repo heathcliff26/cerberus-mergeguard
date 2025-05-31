@@ -105,7 +105,7 @@ $ podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/c
 
 ### (Optional) Installing binary in CLI
 
-You can download the latest binary from the [releases](https://github.com/heathcliff26/cerberus-mergeguard/releases/latest).
+You can download the latest binary from the [releases](https://github.com/heathcliff26/cerberus-mergeguard/releases/latest) page.
 
 Alternatively you can use cargo with `cargo install cerberus-mergeguard`.
 
