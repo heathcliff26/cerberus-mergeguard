@@ -12,10 +12,6 @@ on:
         description: "Update existing release"
         type: boolean
         default: false
-      tag:
-        description: "Release tag to use"
-        type: string
-        required: true
       latest:
         description: "Tag container as latest"
         type: boolean
@@ -26,26 +22,18 @@ on:
         default: false
 
 jobs:
-  preflight:
-    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+  extract-version:
+    uses: heathcliff26/ci/.github/workflows/cargo-version.yaml@main
     permissions:
       contents: read
-    with:
-      cmd: |
-        set -e
-        version="v$(yq -r '.package.version' Cargo.toml)"
-        if [[ "${{ inputs.tag }}" != "${version}" ]]; then
-          echo "Tag '${{ inputs.tag }}' does not match version '${version}' in Cargo.toml"
-          exit 1
-        fi
 
   tag:
     uses: heathcliff26/ci/.github/workflows/tag.yaml@main
-    needs: preflight
+    needs: extract-version
     permissions:
       contents: write
     with:
-      tag: ${{ inputs.tag }}
+      tag: ${{ needs.extract-version.outputs.version }}
       overwrite: ${{ inputs.update }}
     secrets: inherit
 
@@ -57,30 +45,29 @@ jobs:
       packages: write
       security-events: write
     with:
-      tag: ${{ inputs.tag }}
+      release: true
       latest: ${{ inputs.latest }}
     secrets: inherit
 
   release:
     uses: heathcliff26/ci/.github/workflows/release.yaml@main
-    needs: build
+    needs:
+      - build
+      - extract-version
     permissions:
       contents: write
     with:
       draft: ${{ inputs.draft }}
       update: ${{ inputs.update }}
-      tag: ${{ inputs.tag }}
+      tag: ${{ needs.extract-version.outputs.version }}
       release-artifacts: "release/*"
       artifacts: "cerberus-mergeguard-*"
       prerelease: ${{ inputs.prerelease }}
 
   publish-crate:
-    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+    uses: heathcliff26/ci/.github/workflows/cargo-release.yaml@main
     if: ${{ inputs.draft == false && inputs.update == false }}
     needs: build
     permissions:
       contents: read
-    with:
-      cmd: |
-        echo '${{ secrets.CRATES_IO_API_TOKEN }}' | cargo login
-        cargo publish
+    secrets: inherit
