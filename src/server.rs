@@ -8,6 +8,7 @@ use axum::{
 use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use tokio::net::TcpListener;
 use tokio::signal;
 use tower_http::trace::TraceLayer;
 use tracing::{debug, error, info, warn};
@@ -15,6 +16,7 @@ use tracing::{debug, error, info, warn};
 mod hex;
 #[cfg(test)]
 mod test;
+mod tls;
 
 pub const SERVER_STATUS_OK: &str = "ok";
 pub const SERVER_STATUS_ERROR: &str = "error";
@@ -91,7 +93,9 @@ pub struct Server {
 
 #[derive(Clone)]
 struct ServerState {
+    // TODO: Check if this could be a string
     webhook_secret: Option<String>,
+    // TODO: This could be a reference with a mutex for token cache
     github: Client,
 }
 
@@ -116,29 +120,47 @@ impl Server {
     pub async fn run(&self, github: Client) -> Result<(), String> {
         // TODO: Convert strings to &str where possible to avoid unnecessary allocations
         let state = ServerState::new(self.options.webhook_secret.clone(), github);
-
-        let webhook_router: Router = Router::new()
-            .route("/webhook", post(webhook_handler))
-            .with_state(state)
-            .layer(TraceLayer::new_for_http());
-
-        // Do not use tracing for the health check endpoint
-        let health_router: Router = Router::new().route("/healthz", get(healthz));
-
-        let router: Router = Router::new().merge(webhook_router).merge(health_router);
+        let router = new_router(state);
 
         let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], self.options.port));
         info!("Starting server on {}", addr);
 
-        let listener = tokio::net::TcpListener::bind(addr)
+        let listener = TcpListener::bind(addr)
             .await
             .map_err(|e| format!("Failed to bind to port: {e}"))?;
-        // TODO: Add SSL support if enabled
-        axum::serve(listener, router)
-            .with_graceful_shutdown(shutdown_signal())
+
+        if self.options.ssl.enabled {
+            tls::serve_tls(
+                listener,
+                router,
+                &self.options.ssl.key,
+                &self.options.ssl.cert,
+                shutdown_signal(),
+            )
             .await
-            .map_err(|e| format!("Server error: {e}"))
+        } else {
+            serve(listener, router).await
+        }
     }
+}
+
+fn new_router(state: ServerState) -> Router {
+    let webhook_router: Router = Router::new()
+        .route("/webhook", post(webhook_handler))
+        .with_state(state)
+        .layer(TraceLayer::new_for_http());
+
+    // Do not use tracing for the health check endpoint
+    let health_router: Router = Router::new().route("/healthz", get(healthz));
+
+    Router::new().merge(webhook_router).merge(health_router)
+}
+
+async fn serve(listener: TcpListener, router: Router) -> Result<(), String> {
+    axum::serve(listener, router)
+        .with_graceful_shutdown(shutdown_signal())
+        .await
+        .map_err(|e| format!("Server error: {e}"))
 }
 
 /// Expose health check endpoint
