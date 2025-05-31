@@ -4,10 +4,10 @@ name: CI
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Use to set tag, default: rolling"
-        type: string
-        default: "rolling"
+      release:
+        description: "Release build"
+        type: boolean
+        default: false
         required: false
       dry-run:
         description: "Do not push image"
@@ -21,10 +21,10 @@ on:
         required: false
   workflow_call:
     inputs:
-      tag:
-        description: "Use to set tag, default: rolling"
-        type: string
-        default: "rolling"
+      release:
+        description: "Release build"
+        type: boolean
+        default: false
         required: false
       dry-run:
         description: "Do not push image"
@@ -56,6 +56,11 @@ on:
     branches: ["main"]
 
 jobs:
+  extract-version:
+    uses: heathcliff26/ci/.github/workflows/cargo-version.yaml@main
+    permissions:
+      contents: read
+
   doc:
     uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
     permissions:
@@ -111,13 +116,14 @@ jobs:
       contents: read
       packages: write
     needs:
+      - extract-version
       - doc
       - lint
       - test
       - validate
     with:
       dockerfile: Dockerfile
-      tag: "${{ inputs.tag == '' && 'rolling' || inputs.tag }}"
+      tag: "${{ inputs.release && needs.extract-version.outputs.version || 'rolling' }}"
       tags: "${{ inputs.latest == true && 'type=raw,value=latest' || '' }}"
       dry-run: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || inputs.dry-run == 'true' }}
     secrets: inherit
