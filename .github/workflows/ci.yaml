@@ -89,6 +89,13 @@ jobs:
     with:
       cmd: "make validate"
 
+  e2e:
+    uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
+    permissions:
+      contents: read
+    with:
+      cmd: "make test-e2e"
+
   build-binary:
     uses: heathcliff26/ci/.github/workflows/run-script.yaml@main
     needs:
@@ -96,6 +103,7 @@ jobs:
       - lint
       - test
       - validate
+      - e2e
     permissions:
       contents: read
     strategy:
@@ -121,6 +129,7 @@ jobs:
       - lint
       - test
       - validate
+      - e2e
     with:
       dockerfile: Dockerfile
       tag: "${{ inputs.release && needs.extract-version.outputs.version || 'rolling' }}"
