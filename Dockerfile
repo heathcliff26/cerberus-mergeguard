@@ -25,7 +25,7 @@ RUN cargo build --release
 ###############################################################################
 # BEGIN final-stage
 # Create final docker image
-FROM docker.io/library/alpine:3.22.0@sha256:a8bf99cad4d74d1ec021670fa473e6ff716e401b0542918ce68e94c3234910e1 AS final-stage
+FROM docker.io/library/alpine:3.22.0@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715 AS final-stage
 
 COPY --from=build-stage /app/target/release/cerberus-mergeguard /usr/local/bin/cerberus-mergeguard
 
