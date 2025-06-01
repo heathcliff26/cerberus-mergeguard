@@ -125,21 +125,25 @@ impl Server {
         let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], self.options.port));
         info!("Starting server on {}", addr);
 
-        let listener = TcpListener::bind(addr)
-            .await
-            .map_err(|e| format!("Failed to bind to port: {e}"))?;
-
         if self.options.ssl.enabled {
-            tls::serve_tls(
-                listener,
-                router,
-                &self.options.ssl.key,
-                &self.options.ssl.cert,
-                shutdown_signal(),
-            )
-            .await
+            let listener =
+                tls::TlsListener::bind(addr, &self.options.ssl.key, &self.options.ssl.cert)
+                    .await
+                    .map_err(|e| format!("Failed to bind to port with SSL: {e}"))?;
+
+            axum::serve(listener, router)
+                .with_graceful_shutdown(shutdown_signal())
+                .await
+                .map_err(|e| format!("Server error: {e}"))
         } else {
-            serve(listener, router).await
+            let listener = TcpListener::bind(addr)
+                .await
+                .map_err(|e| format!("Failed to bind to port: {e}"))?;
+
+            axum::serve(listener, router)
+                .with_graceful_shutdown(shutdown_signal())
+                .await
+                .map_err(|e| format!("Server error: {e}"))
         }
     }
 }
@@ -154,13 +158,6 @@ fn new_router(state: ServerState) -> Router {
     let health_router: Router = Router::new().route("/healthz", get(healthz));
 
     Router::new().merge(webhook_router).merge(health_router)
-}
-
-async fn serve(listener: TcpListener, router: Router) -> Result<(), String> {
-    axum::serve(listener, router)
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .map_err(|e| format!("Server error: {e}"))
 }
 
 /// Expose health check endpoint
