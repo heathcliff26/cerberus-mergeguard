@@ -28,7 +28,7 @@ Instead of having empty runs, crazy bash magic or other tricks, you only need to
 ## Usage
 
 ### CLI Args
-```ignore
+```text
 $ cerberus-mergeguard help
 Guard PRs from merging until all triggered checks have passed
 
@@ -99,8 +99,8 @@ Before you run the bot, copy both the [example configuration](examples/config.ya
 Afterwards ensure you fill out all required attributes in the configuration file. The example has descriptions of the values.
 
 Finally run the bot with
-```ignore
-$ podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/cerberus-mergeguard:latest
+```bash
+podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/cerberus-mergeguard:latest
 ```
 
 ### (Optional) Installing binary in CLI
