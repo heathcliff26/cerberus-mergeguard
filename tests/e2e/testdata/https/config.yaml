@@ -1,0 +1,13 @@
+---
+log-level: debug
+
+github:
+  client-id: "testclient"
+  private-key: "/config/testapp.key"
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    cert: "/config/server.crt"
+    key: "/config/server.key"

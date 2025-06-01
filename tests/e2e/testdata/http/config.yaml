@@ -1,0 +1,6 @@
+---
+log-level: debug
+
+github:
+  client-id: "testclient"
+  private-key: "/config/testapp.key"

@@ -20,6 +20,10 @@ run-image: image
 test:
 	cargo test
 
+# Run e2e tests
+test-e2e:
+	cargo test --features e2e e2e
+
 # Generate coverage profile
 coverprofile:
 	hack/coverprofile.sh
@@ -57,6 +61,7 @@ help:
 	image \
 	run-image \
 	test \
+	test-e2e \
 	coverprofile \
 	lint \
 	doc \

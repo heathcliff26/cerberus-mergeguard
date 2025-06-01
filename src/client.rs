@@ -45,8 +45,12 @@ impl Client {
     /// Create a new GitHub client with the provided options.
     /// Will read the private key from the file system.
     pub fn build(options: ClientOptions) -> Result<Self, String> {
-        let key = std::fs::read_to_string(&options.private_key)
-            .map_err(|e| format!("Failed to read private key: {e}"))?;
+        let key = std::fs::read_to_string(&options.private_key).map_err(|e| {
+            format!(
+                "Failed to read private key '{}': {}",
+                &options.private_key, e
+            )
+        })?;
         let key = jsonwebtoken::EncodingKey::from_rsa_pem(key.as_bytes())
             .map_err(|e| format!("Failed to create encoding key: {e}"))?;
         Ok(Client {
