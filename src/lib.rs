@@ -6,6 +6,10 @@ mod api;
 mod client;
 mod config;
 mod server;
+#[cfg(test)]
+mod test;
+#[cfg(any(test, feature = "e2e"))]
+pub mod testutils;
 mod types;
 mod version;
 

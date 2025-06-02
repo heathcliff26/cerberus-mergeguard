@@ -3,15 +3,23 @@ use serde::{Deserialize, Serialize};
 #[cfg(test)]
 mod test;
 
+/// Name of check-runs created by the bot
 pub const CHECK_RUN_NAME: &str = "cerberus-mergeguard";
+/// Status for unfinished check-runs from the bot
+/// Using 'queued', because while 'pending' is valid according to docs, the actual API does not allow it.
 pub const CHECK_RUN_INITIAL_STATUS: &str = "queued";
+/// Status for completed check-runs from the bot
 pub const CHECK_RUN_COMPLETED_STATUS: &str = "completed";
+/// Conclusion for completed check-runs from the bot
 pub const CHECK_RUN_CONCLUSION: &str = "success";
+/// Title for unfinished check-runs from the bot
 pub const CHECK_RUN_INITIAL_TITLE: &str = "Waiting for other checks to complete";
+/// Title for completed check-runs from the bot
 pub const CHECK_RUN_COMPLETED_TITLE: &str = "All status checks have passed";
+/// Summary for check-runs from the bot
 pub const CHECK_RUN_SUMMARY: &str = "Will block merging until all other checks have completed";
 
-/// Represents a GitHub webhook event for pull requests.
+/// Partial fields of a pull_request event webhook payload.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PullRequestEvent {
     pub action: String,
@@ -22,7 +30,7 @@ pub struct PullRequestEvent {
     pub sender: User,
 }
 
-/// Represents a GitHub check run event.
+/// Partial fields of a check_run event webhook payload.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CheckRunEvent {
     pub action: String,
@@ -32,7 +40,7 @@ pub struct CheckRunEvent {
     pub sender: User,
 }
 
-/// Represents a GitHub pull request.
+/// Partial fields of a pull_request object.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PullRequest {
     pub number: u64,
@@ -44,14 +52,14 @@ pub struct PullRequest {
     pub head: BranchRef,
 }
 
-/// Represents a GitHub user.
+/// Partial fields of a user object.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     pub login: String,
     pub id: u64,
 }
 
-/// Represents a branch reference in a pull request.
+/// Partial fields of a branch reference object.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BranchRef {
     pub label: String,
@@ -62,6 +70,7 @@ pub struct BranchRef {
     pub repo: Repo,
 }
 
+/// Partial fields of a repository object.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Repo {
     pub id: u64,
@@ -69,6 +78,7 @@ pub struct Repo {
     pub full_name: String,
 }
 
+/// Partial fields of a check_run object.
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct CheckRun {
     #[serde(skip_serializing_if = "is_zero")]
@@ -124,6 +134,7 @@ impl CheckRun {
     }
 }
 
+/// Partial fields of a check_run output object.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CheckRunOutput {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -132,6 +143,7 @@ pub struct CheckRunOutput {
     pub summary: Option<String>,
 }
 
+/// Partial fields of a GitHub App object.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct App {
     pub id: u64,
@@ -141,18 +153,21 @@ pub struct App {
     pub owner: User,
 }
 
+/// Partial fields of an installation object.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Installation {
     pub id: u64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+/// Response to check-run requests from the GitHub API.
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CheckRunsResponse {
     pub total_count: u64,
     pub check_runs: Vec<CheckRun>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+/// Response to installation token requests from the GitHub API.
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TokenResponse {
     pub token: String,
     pub expires_at: String,
