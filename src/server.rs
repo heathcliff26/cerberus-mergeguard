@@ -86,7 +86,7 @@ impl SSLOptions {
     }
 }
 
-// HTTP Server for receiving webhook events from GitHub
+/// HTTP Server for receiving webhook events from GitHub
 pub struct Server {
     options: ServerOptions,
 }

@@ -33,6 +33,7 @@ tokio-native-tls = "0.3.1"
 tower-http = { version = "0.6.4", features = ["trace"] }
 tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
+rand = { version = "0.9.1", optional = true }
 
 [profile.release]
 strip = "symbols"
@@ -40,4 +41,7 @@ lto = true
 
 [features]
 default = []
-e2e = []
+e2e = ["dep:rand"]
+
+[dev-dependencies]
+rand = "0.9.1"

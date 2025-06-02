@@ -1,3 +1,4 @@
+use cerberus_mergeguard::testutils::TlsCertificate;
 use reqwest::Client;
 use std::error::Error;
 use std::process::Command;
@@ -8,7 +9,7 @@ static CONTAINER_IMAGE: &str = "localhost/cerberus-mergeguard:e2e-test";
 
 #[tokio::test]
 async fn container_image_healthcheck_http() {
-    let _cert = TlcCertificate::create("tests/e2e/testdata/http/testapp");
+    let _cert = TlsCertificate::create("tests/e2e/testdata/http/testapp");
     let _container =
         RunningContainer::setup("cerberus-http", "8080:8080", "./tests/e2e/testdata/http/").await;
 
@@ -31,8 +32,8 @@ async fn container_image_healthcheck_http() {
 
 #[tokio::test]
 async fn container_image_healthcheck_https() {
-    let _app_cert = TlcCertificate::create("tests/e2e/testdata/https/testapp");
-    let server_cert = TlcCertificate::create("tests/e2e/testdata/https/server");
+    let _app_cert = TlsCertificate::create("tests/e2e/testdata/https/testapp");
+    let server_cert = TlsCertificate::create("tests/e2e/testdata/https/server");
     let _container =
         RunningContainer::setup("cerberus-https", "8443:8443", "./tests/e2e/testdata/https/").await;
 
@@ -173,76 +174,5 @@ impl Drop for RunningContainer {
         }
 
         println!("Container {} removed successfully.", self.name);
-    }
-}
-
-struct TlcCertificate {
-    key: String,
-    crt: String,
-}
-
-impl TlcCertificate {
-    /// Create a self signed TLS certificate and key pair.
-    fn create(name: &str) -> Self {
-        let key = format!("{name}.key").to_string();
-        let crt = format!("{name}.crt").to_string();
-        println!("Creating TLS certificate '{crt}' and key '{key}' ");
-        let output = Command::new("openssl")
-            .args([
-                "req",
-                "-x509",
-                "-nodes",
-                "-days",
-                "1",
-                "-newkey",
-                "rsa:2048",
-                "-keyout",
-                &key,
-                "-out",
-                &crt,
-                "-subj",
-                "/CN=localhost",
-            ])
-            .output()
-            .expect("Failed to execute openssl command");
-
-        if !output.status.success() {
-            panic!(
-                "Failed to create TLS certificate: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-        }
-        let output = Command::new("chmod")
-            .args(["644", &key])
-            .output()
-            .expect("Failed to execute chmod command");
-        if !output.status.success() {
-            panic!(
-                "Failed to set permissions for TLS key: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-        }
-
-        println!("TLS certificate created successfully.");
-        TlcCertificate { key, crt }
-    }
-    /// Returns the certificate as a reqwest::tls::Certificate
-    fn certificate(&self) -> reqwest::tls::Certificate {
-        let cert_data = std::fs::read(&self.crt).expect("Failed to read TLS certificate file");
-        reqwest::tls::Certificate::from_pem(&cert_data)
-            .expect("Failed to create TLS certificate from PEM data")
-    }
-}
-
-impl Drop for TlcCertificate {
-    fn drop(&mut self) {
-        println!("Removing TLS certificate: {}", self.crt);
-
-        let res_key = std::fs::remove_file(&self.key);
-        let res_crt = std::fs::remove_file(&self.crt);
-        res_key.expect("Failed to remove TLS key file");
-        res_crt.expect("Failed to remove TLS certificate file");
-
-        println!("TLS certificate removed successfully.");
     }
 }
