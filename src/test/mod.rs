@@ -61,34 +61,10 @@ async fn pull_request_event() {
         number: 1,
         pull_request: PullRequest {
             title: "Test Pull Request".to_string(),
-            state: "open".to_string(),
-            merged: false,
-            user: User {
-                login: "test_user".to_string(),
-                id: 987654,
-            },
             head: BranchRef {
                 label: "base_label".to_string(),
                 sha: "base_sha".to_string(),
                 ref_field: "base_ref".to_string(),
-                user: User {
-                    login: "base_user".to_string(),
-                    id: 123456,
-                },
-                repo: Repo {
-                    id: 12345678,
-                    name: "test_repo".to_string(),
-                    full_name: "test_user/test_repo".to_string(),
-                },
-            },
-            base: BranchRef {
-                label: "base_label".to_string(),
-                sha: "base_sha".to_string(),
-                ref_field: "base_ref".to_string(),
-                user: User {
-                    login: "base_user".to_string(),
-                    id: 123456,
-                },
                 repo: Repo {
                     id: 12345678,
                     name: "test_repo".to_string(),
@@ -102,10 +78,6 @@ async fn pull_request_event() {
             id: 12345678,
             name: "test_repo".to_string(),
             full_name: "test_user/test_repo".to_string(),
-        },
-        sender: User {
-            login: "test_user".to_string(),
-            id: 987654,
         },
     };
     let response = reqwest::Client::new()
