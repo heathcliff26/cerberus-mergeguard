@@ -330,7 +330,7 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
     if payload
         .check_run
         .app
-        .is_none_or(|app| app.client_id == client.client_id())
+        .is_some_and(|app| app.client_id == client.client_id())
     {
         debug!("Ignoring check_run event from our own app");
         return (StatusCode::OK, Json(Response::new()));
