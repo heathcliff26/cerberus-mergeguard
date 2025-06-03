@@ -27,7 +27,6 @@ pub struct PullRequestEvent {
     pub number: u64,
     pub pull_request: PullRequest,
     pub repository: Repo,
-    pub sender: User,
 }
 
 /// Partial fields of a check_run event webhook payload.
@@ -37,7 +36,6 @@ pub struct CheckRunEvent {
     pub check_run: CheckRun,
     pub installation: Option<Installation>,
     pub repository: Repo,
-    pub sender: User,
 }
 
 /// Partial fields of a pull_request object.
@@ -45,18 +43,7 @@ pub struct CheckRunEvent {
 pub struct PullRequest {
     pub number: u64,
     pub title: String,
-    pub state: String,
-    pub merged: bool,
-    pub user: User,
-    pub base: BranchRef,
     pub head: BranchRef,
-}
-
-/// Partial fields of a user object.
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct User {
-    pub login: String,
-    pub id: u64,
 }
 
 /// Partial fields of a branch reference object.
@@ -66,7 +53,6 @@ pub struct BranchRef {
     #[serde(rename = "ref")]
     pub ref_field: String,
     pub sha: String,
-    pub user: User,
     pub repo: Repo,
 }
 
@@ -150,7 +136,6 @@ pub struct App {
     pub client_id: String,
     pub slug: String,
     pub name: String,
-    pub owner: User,
 }
 
 /// Partial fields of an installation object.
