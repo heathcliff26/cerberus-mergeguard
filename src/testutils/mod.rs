@@ -157,7 +157,7 @@ async fn handle_request(
     if let Some(expected) = state.expected_requests.pop_front() {
         expected.response()
     } else {
-        panic!("Unexpected request");
+        panic!("Unexpected request: {}", uri);
     }
 }
 

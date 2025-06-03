@@ -150,10 +150,15 @@ fn set_log_level(level: &str) {
             Level::INFO
         }
     };
-    tracing_subscriber::fmt()
+    let logger = tracing_subscriber::fmt()
         .with_max_level(level)
-        .with_ansi(false)
-        .init();
+        .with_ansi(false);
+    #[cfg(not(test))]
+    logger.init();
+
+    // We can only init the logger once, but testing might call the parent function multiple times.
+    #[cfg(test)]
+    logger.try_init().unwrap_or_default();
 }
 
 async fn get_and_print_status(
