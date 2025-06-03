@@ -6,6 +6,8 @@ base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath | xargs dirname)"
 
 pushd "${base_dir}" >/dev/null
 
+excludes=("/*" "**/test.rs" "src/test/*" "src/testutils/*")
+
 if ! command -v grcov >/dev/null 2>&1; then
     echo "Installing grcov"
     cargo install grcov
@@ -27,8 +29,13 @@ export LLVM_PROFILE_FILE="cargo-test-%p-%m.profraw"
 
 cargo test
 
-grcov . --binary-path ./target/debug/deps/ -s . -t html --branch --ignore-not-existing --ignore "/*" --ignore "**/test.rs" -o target/coverage/html
-grcov . --binary-path ./target/debug/deps/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" --ignore "**/test.rs" -o target/coverage/lcov.info
+ignored_flags=()
+for exclude in "${excludes[@]}"; do
+    ignored_flags+=("--ignore" "$exclude")
+done
+
+grcov . --binary-path ./target/debug/deps/ -s . -t html --branch --ignore-not-existing "${ignored_flags[@]}" -o target/coverage/html
+grcov . --binary-path ./target/debug/deps/ -s . -t lcov --branch --ignore-not-existing "${ignored_flags[@]}" -o target/coverage/lcov.info
 
 if compgen -G "./*.profraw" >/dev/null; then
     rm ./*.profraw
