@@ -308,8 +308,8 @@ async fn handle_pull_request_event(client: &Client, payload: &str) -> (StatusCod
         );
     };
     info!(
-        "Created check run for pull request {}",
-        payload.pull_request.number
+        "Created check run for pull request {} - {}",
+        payload.repository.full_name, payload.pull_request.number
     );
     (StatusCode::OK, Json(Response::new()))
 }
