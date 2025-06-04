@@ -135,4 +135,6 @@ jobs:
       tag: "${{ inputs.release && needs.extract-version.outputs.version || 'rolling' }}"
       tags: "${{ inputs.latest == true && 'type=raw,value=latest' || '' }}"
       dry-run: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || inputs.dry-run == 'true' }}
+      build-args: |
+        CI_COMMIT_SHA=${{ github.sha }}
     secrets: inherit

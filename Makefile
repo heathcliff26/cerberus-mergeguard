@@ -10,7 +10,7 @@ release:
 
 # Build the container image
 image:
-	podman build -t $(REPOSITORY)/$(CONTAINER_NAME):$(TAG) .
+	podman build --build-arg="CI_COMMIT_SHA=$$(git rev-parse HEAD)" -t $(REPOSITORY)/$(CONTAINER_NAME):$(TAG) .
 
 # Run the container image
 run-image: image
