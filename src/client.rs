@@ -1,9 +1,14 @@
 use crate::{
     api,
-    types::{CHECK_RUN_CONCLUSION, CheckRun},
+    types::{CHECK_RUN_CONCLUSION, CheckRun, TokenResponse},
 };
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use tokio::sync::Mutex;
 use tracing::{debug, warn};
+
+#[cfg(test)]
+mod test;
 
 /// Configuration options for creating the github client
 #[derive(Serialize, Deserialize, Debug)]
@@ -34,11 +39,11 @@ impl ClientOptions {
     }
 }
 
-#[derive(Clone)]
 pub struct Client {
     client_id: String,
     key: jsonwebtoken::EncodingKey,
     api: String,
+    token_cache: Mutex<HashMap<u64, TokenResponse>>,
 }
 
 impl Client {
@@ -57,12 +62,32 @@ impl Client {
             client_id: options.client_id,
             key,
             api: options.api,
+            token_cache: Mutex::new(HashMap::new()),
         })
     }
 
     /// Return a reference to the client ID.
     pub fn client_id(&self) -> &str {
         &self.client_id
+    }
+
+    /// Get an installations token for the GitHub App.
+    async fn get_token(&self, app_installation_id: u64) -> Result<String, String> {
+        if let Some(token) = self.get_cached_token(app_installation_id).await {
+            return Ok(token);
+        }
+
+        let claims = JWTClaims::new(&self.client_id);
+        let header = jsonwebtoken::Header::new(jsonwebtoken::Algorithm::RS256);
+        let jwt = jsonwebtoken::encode(&header, &claims, &self.key)
+            .map_err(|e| format!("Failed to create JWT token: {e}"))?;
+        let token = api::get_installation_token(&self.api, &jwt, app_installation_id).await?;
+
+        let mut cache = self.token_cache.lock().await;
+        let token_value = token.token.clone();
+        cache.insert(app_installation_id, token);
+
+        Ok(token_value)
     }
 
     /// Create a new pending check run for a commit in a repository.
@@ -128,15 +153,6 @@ impl Client {
                 api::create_check_run(&self.api, &token, repo, &run).await
             }
         }
-    }
-
-    /// Get an installations token for the GitHub App.
-    async fn get_token(&self, app_installation_id: u64) -> Result<String, String> {
-        let claims = JWTClaims::new(&self.client_id);
-        let header = jsonwebtoken::Header::new(jsonwebtoken::Algorithm::RS256);
-        let jwt = jsonwebtoken::encode(&header, &claims, &self.key)
-            .map_err(|e| format!("Failed to create JWT token: {e}"))?;
-        api::get_installation_token(&self.api, &jwt, app_installation_id).await
     }
 
     /// Return a list of current check runs for a commit in a repository.
@@ -214,6 +230,26 @@ impl Client {
         (uncompleted, own_check_run)
     }
 
+    /// Check the cache for a token and return it if it exists.
+    async fn get_cached_token(&self, app_installation_id: u64) -> Option<String> {
+        let cache = self.token_cache.lock().await;
+        if let Some(token) = cache.get(&app_installation_id) {
+            let now = chrono::Utc::now() + chrono::Duration::seconds(30);
+            if token.expires_at.ge(&now) {
+                debug!(
+                    "Using cached token for installation ID: {}",
+                    app_installation_id
+                );
+                return Some(token.token.clone());
+            }
+            debug!(
+                "Cached token for installation ID {} is expired, fetching a new one",
+                app_installation_id
+            );
+        }
+        None
+    }
+
     #[cfg(test)]
     pub fn new_for_testing(client_id: &str, secret: &str, api: &str) -> Self {
         let key = jsonwebtoken::EncodingKey::from_secret(secret.as_bytes());
@@ -222,6 +258,7 @@ impl Client {
             client_id: client_id.to_string(),
             key,
             api: api.to_string(),
+            token_cache: Mutex::new(HashMap::new()),
         }
     }
 }

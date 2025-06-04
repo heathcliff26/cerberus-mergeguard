@@ -8,6 +8,7 @@ use axum::{
 use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use std::sync::Arc;
 use tokio::net::TcpListener;
 use tokio::signal;
 use tower_http::trace::TraceLayer;
@@ -95,13 +96,13 @@ pub struct Server {
 struct ServerState {
     // TODO: Check if this could be a string
     webhook_secret: Option<String>,
-    // TODO: This could be a reference with a mutex for token cache
-    github: Client,
+    github: Arc<Client>,
 }
 
 impl ServerState {
     /// Create a new server state with the given webhook secret and GitHub client
     pub fn new(webhook_secret: Option<String>, github: Client) -> Self {
+        let github = Arc::new(github);
         Self {
             webhook_secret,
             github,

@@ -34,6 +34,7 @@ tower-http = { version = "0.6.4", features = ["trace"] }
 tracing = { version = "0.1.41", features = ["max_level_debug", "release_max_level_debug"] }
 tracing-subscriber = "0.3.19"
 rand = { version = "0.9.1", optional = true }
+chrono = { version = "0.4.41", default-features = false, features = ["std", "serde", "now"] }
 
 [profile.release]
 strip = "symbols"
