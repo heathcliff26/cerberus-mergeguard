@@ -16,6 +16,8 @@ COPY src ./src
 # Needed as we include it for docs.
 RUN touch README.md
 
+ARG CI_COMMIT_SHA=unknown
+
 RUN cargo build --release
 
 #
