@@ -6,11 +6,8 @@ use axum::{
     http::{HeaderMap, Method, StatusCode, Uri},
 };
 use std::{collections::VecDeque, process::Command};
-use std::{
-    net::SocketAddr,
-    sync::{Arc, Mutex},
-};
-use tokio::sync::watch;
+use std::{net::SocketAddr, sync::Arc};
+use tokio::sync::{Mutex, watch};
 
 type SharedState = Arc<Mutex<MockGithubApiServerState>>;
 
@@ -143,7 +140,7 @@ async fn handle_request(
     State(state): State<SharedState>,
     payload: String,
 ) -> (StatusCode, String) {
-    let mut state = state.lock().expect("Failed to lock state");
+    let mut state = state.lock().await;
 
     let record = RecordedRequests {
         headers,

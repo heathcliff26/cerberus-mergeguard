@@ -9,7 +9,7 @@ pub async fn get_installation_token(
     endpoint: &str,
     token: &str,
     installation_id: u64,
-) -> Result<String, String> {
+) -> Result<TokenResponse, String> {
     let url = format!("{endpoint}/app/installations/{installation_id}/access_tokens");
     info!("Fetching installation token from '{url}'");
 
@@ -21,7 +21,7 @@ pub async fn get_installation_token(
         .await
         .map_err(|e| format!("Failed to parse response: {e}"))?;
 
-    Ok(token.token)
+    Ok(token)
 }
 
 /// Fetch all check runs for a commit.

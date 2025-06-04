@@ -20,7 +20,7 @@ async fn pull_request_event() {
             StatusCode::OK,
             TokenResponse {
                 token: token.to_string(),
-                expires_at: "not-implemented".to_string(),
+                expires_at: chrono::Utc::now() + chrono::Duration::seconds(3600),
             },
         ),
         ExpectedRequests::CreateCheckRun(StatusCode::OK, check_run),
@@ -94,7 +94,7 @@ async fn pull_request_event() {
         "Webhook call should succeed"
     );
 
-    let state = server.state.lock().expect("Failed to lock state");
+    let state = server.state.lock().await;
 
     // Check that the token request was made
     let request = state.requests.get(0).expect("Should have token request");
@@ -141,17 +141,10 @@ async fn check_run_event_incomplete() {
             StatusCode::OK,
             TokenResponse {
                 token: token.to_string(),
-                expires_at: "not-implemented".to_string(),
+                expires_at: chrono::Utc::now() + chrono::Duration::seconds(3600),
             },
         ),
         ExpectedRequests::GetCheckRuns(StatusCode::OK, check_runs_response),
-        ExpectedRequests::GetInstallationToken(
-            StatusCode::OK,
-            TokenResponse {
-                token: token.to_string(),
-                expires_at: "not-implemented".to_string(),
-            },
-        ),
         ExpectedRequests::UpdateCheckRun(StatusCode::OK, check_run.clone()),
     ]);
 
@@ -211,7 +204,7 @@ async fn check_run_event_incomplete() {
         "Webhook call should succeed"
     );
 
-    let state = server.state.lock().expect("Failed to lock state");
+    let state = server.state.lock().await;
 
     // Check that the token request was made
     let request = state.requests.get(0).expect("Should have token request");
