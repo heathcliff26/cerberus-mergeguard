@@ -103,21 +103,50 @@ impl CheckRun {
             ..Default::default()
         }
     }
-    /// Update the status based on the success flag.
-    pub fn update_status(&mut self, success: bool) {
-        if success {
-            self.status = CHECK_RUN_COMPLETED_STATUS.to_string();
-            self.conclusion = Some(CHECK_RUN_CONCLUSION.to_string());
-            if let Some(output) = &mut self.output {
-                output.title = Some(CHECK_RUN_COMPLETED_TITLE.to_string());
-            }
+    /// Update the status based on the count of uncompleted check-runs.
+    /// Returns if the content of the check-run has changed.
+    pub fn update_status(&mut self, count: u32) -> bool {
+        let status: String;
+        let conclusion: Option<String>;
+        let output_title: Option<String>;
+
+        if count == 0 {
+            status = CHECK_RUN_COMPLETED_STATUS.to_string();
+            conclusion = Some(CHECK_RUN_CONCLUSION.to_string());
+            output_title = Some(CHECK_RUN_COMPLETED_TITLE.to_string());
         } else {
-            self.status = CHECK_RUN_INITIAL_STATUS.to_string();
-            self.conclusion = None;
-            if let Some(output) = &mut self.output {
-                output.title = Some(CHECK_RUN_INITIAL_TITLE.to_string());
+            status = CHECK_RUN_INITIAL_STATUS.to_string();
+            conclusion = None;
+            output_title = Some(format!("Waiting for {count} other checks to complete"));
+        }
+
+        let mut changed = false;
+
+        if self.status != status {
+            changed = true;
+            self.status = status;
+        }
+        if self.conclusion != conclusion {
+            changed = true;
+            self.conclusion = conclusion;
+        }
+        match &mut self.output {
+            Some(output) => {
+                if output.title != output_title {
+                    changed = true;
+                    output.title = output_title;
+                }
+            }
+            None => {
+                changed = true;
+                self.output = Some(CheckRunOutput {
+                    title: output_title,
+                    summary: Some(CHECK_RUN_SUMMARY.to_string()),
+                });
             }
         }
+
+        changed
     }
 }
 

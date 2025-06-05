@@ -133,7 +133,7 @@ impl Client {
         app_installation_id: u64,
         repo: &str,
         commit: &str,
-        success: bool,
+        count: u32,
         check_run: Option<CheckRun>,
     ) -> Result<(), String> {
         let token = self
@@ -143,13 +143,17 @@ impl Client {
 
         match check_run {
             Some(mut run) => {
-                run.update_status(success);
-                api::update_check_run(&self.api, &token, repo, &run).await
+                if run.update_status(count) {
+                    api::update_check_run(&self.api, &token, repo, &run).await
+                } else {
+                    debug!("No changes to check run status, skipping update");
+                    Ok(())
+                }
             }
             None => {
                 warn!("No check run found to update, creating a new one");
                 let mut run = CheckRun::new(commit);
-                run.update_status(success);
+                run.update_status(count);
                 api::create_check_run(&self.api, &token, repo, &run).await
             }
         }

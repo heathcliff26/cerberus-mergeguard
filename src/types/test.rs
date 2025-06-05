@@ -54,10 +54,7 @@ fn check_run_assert_initial_fields(run: &CheckRun) {
     assert_eq!(CHECK_RUN_NAME, run.name);
     assert_eq!(CHECK_RUN_INITIAL_STATUS, run.status);
     let output = run.output.as_ref().expect("Should have output");
-    assert_eq!(
-        CHECK_RUN_INITIAL_TITLE,
-        output.title.as_ref().expect("Should have title")
-    );
+    assert!(output.title.is_some(), "Should have title");
     assert_eq!(
         CHECK_RUN_SUMMARY,
         output.summary.as_ref().expect("Should have summary")
@@ -69,7 +66,7 @@ fn check_run_assert_initial_fields(run: &CheckRun) {
 fn check_run_update_status() {
     let mut run = CheckRun::new("test-sha");
 
-    run.update_status(true);
+    assert!(run.update_status(0), "Should have changed status");
     assert_eq!(CHECK_RUN_NAME, run.name);
     assert_eq!(CHECK_RUN_COMPLETED_STATUS, run.status);
     assert_eq!(
@@ -86,6 +83,23 @@ fn check_run_update_status() {
         output.summary.as_ref().expect("Should have summary")
     );
 
-    run.update_status(false);
+    assert!(run.update_status(10), "Should have changed status again");
     check_run_assert_initial_fields(&run);
+
+    assert!(
+        !run.update_status(10),
+        "Should not have changed status again"
+    );
+}
+
+#[test]
+fn parse_token_response() {
+    let test_body = include_str!("testdata/token-response.json");
+
+    let token: TokenResponse = match serde_json::from_str(test_body) {
+        Ok(token) => token,
+        Err(e) => panic!("Failed to parse token: {e}"),
+    };
+
+    assert_eq!("ghs_16C7e42F292c6912E7710c838347Ae178B4a", token.token);
 }

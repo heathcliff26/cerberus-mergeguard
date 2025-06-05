@@ -370,7 +370,7 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
             app_id,
             &payload.repository.full_name,
             &payload.check_run.head_sha,
-            uncompleted == 0,
+            uncompleted,
             own_run,
         )
         .await

@@ -71,7 +71,7 @@ impl App {
                         cli_opts.app_installation_id,
                         &cli_opts.repo,
                         &cli_opts.commit,
-                        uncompleted == 0,
+                        uncompleted,
                         own_run,
                     )
                     .await?;
