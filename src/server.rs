@@ -94,7 +94,6 @@ pub struct Server {
 
 #[derive(Clone)]
 struct ServerState {
-    // TODO: Check if this could be a string
     webhook_secret: Option<String>,
     github: Arc<Client>,
 }
@@ -119,7 +118,6 @@ impl Server {
     /// Run the server
     /// Server will shutdown gracefully on Ctrl+C or SIGTERM
     pub async fn run(&self, github: Client) -> Result<(), String> {
-        // TODO: Convert strings to &str where possible to avoid unnecessary allocations
         let state = ServerState::new(self.options.webhook_secret.clone(), github);
         let router = new_router(state);
 
@@ -385,7 +383,6 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
 pub struct Response {
     /// Status of the server.
     /// "ok" if everything is running fine, "error" if something is wrong.
-    // TODO: use &str
     pub status: String,
     /// Optional message providing more details about the status.
     pub message: String,
