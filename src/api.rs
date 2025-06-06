@@ -1,6 +1,6 @@
+use crate::error::Error;
 use crate::{types::*, version};
 use reqwest::{Client, header, header::HeaderMap, header::HeaderName, header::HeaderValue};
-use std::error::Error;
 use tracing::{debug, info};
 
 /// Get an installation token for the GitHub App.
@@ -9,7 +9,7 @@ pub async fn get_installation_token(
     endpoint: &str,
     token: &str,
     installation_id: u64,
-) -> Result<TokenResponse, String> {
+) -> Result<TokenResponse, Error> {
     let url = format!("{endpoint}/app/installations/{installation_id}/access_tokens");
     info!("Fetching installation token from '{url}'");
 
@@ -19,7 +19,7 @@ pub async fn get_installation_token(
     let token: TokenResponse = response
         .json()
         .await
-        .map_err(|e| format!("Failed to parse response: {e}"))?;
+        .map_err(|e| Error::Parse("get_installation_token", Box::new(e)))?;
 
     Ok(token)
 }
@@ -31,7 +31,7 @@ pub async fn get_check_runs(
     token: &str,
     repo: &str,
     commit: &str,
-) -> Result<Vec<CheckRun>, String> {
+) -> Result<Vec<CheckRun>, Error> {
     let url = format!("{endpoint}/repos/{repo}/commits/{commit}/check-runs");
     info!("Fetching check runs from '{url}'");
 
@@ -43,7 +43,7 @@ pub async fn get_check_runs(
         Ok(check_runs) => check_runs,
         Err(e) => {
             debug!("Response body: '{}'", response);
-            return Err(format!("Failed to parse check-runs response: {e}"));
+            return Err(Error::Parse("get_check_runs", Box::new(e)));
         }
     };
 
@@ -57,7 +57,7 @@ pub async fn create_check_run(
     token: &str,
     repo: &str,
     payload: &CheckRun,
-) -> Result<(), String> {
+) -> Result<(), Error> {
     let url = format!("{endpoint}/repos/{repo}/check-runs");
     info!("Creating check-run for '{}' at '{url}'", payload.head_sha);
 
@@ -75,7 +75,7 @@ pub async fn create_check_run(
         }
         Err(e) => {
             debug!("Response body: '{}'", response);
-            Err(format!("Failed to parse check-run response: {e}"))
+            Err(Error::Parse("create_check_run", Box::new(e)))
         }
     }
 }
@@ -87,7 +87,7 @@ pub async fn update_check_run(
     token: &str,
     repo: &str,
     payload: &CheckRun,
-) -> Result<(), String> {
+) -> Result<(), Error> {
     let url = format!("{endpoint}/repos/{repo}/check-runs/{}", payload.id);
     info!("Updating check-run for '{}' at '{url}'", payload.head_sha);
 
@@ -105,12 +105,12 @@ pub async fn update_check_run(
         }
         Err(e) => {
             debug!("Response body: '{}'", response);
-            Err(format!("Failed to parse check-run response: {e}"))
+            Err(Error::Parse("update_check_run", Box::new(e)))
         }
     }
 }
 
-fn new_client_with_common_headers(token: &str) -> Result<Client, String> {
+fn new_client_with_common_headers(token: &str) -> Result<Client, Error> {
     let mut headers = HeaderMap::new();
     headers.insert(
         header::ACCEPT,
@@ -123,44 +123,32 @@ fn new_client_with_common_headers(token: &str) -> Result<Client, String> {
     headers.insert(header::USER_AGENT, HeaderValue::from_static(version::NAME));
     if !token.is_empty() {
         let bearer = format!("Bearer {token}");
-        let bearer =
-            HeaderValue::from_str(&bearer).map_err(|_| "Invalid bearer token".to_string())?;
+        let bearer = HeaderValue::from_str(&bearer).map_err(|_| Error::InvalidBearerToken())?;
         headers.insert(header::AUTHORIZATION, bearer);
     }
     Client::builder()
         .default_headers(headers)
         .build()
-        .map_err(|e| format!("Failed to create http request: {e}"))
+        .map_err(Error::CreateRequest)
 }
 
-async fn send_request(builder: reqwest::RequestBuilder) -> Result<reqwest::Response, String> {
-    let response = builder.send().await.map_err(|e| full_error_stack(&e))?;
+async fn send_request(builder: reqwest::RequestBuilder) -> Result<reqwest::Response, Error> {
+    let response = builder.send().await.map_err(Error::Send)?;
 
     if !response.status().is_success() {
         let status = response.status();
+        let url = response.url().to_string();
 
         debug!(
             "Request failed with: status='{}', body='{}'",
             status,
             response.text().await.unwrap_or_default(),
         );
-        return Err(format!("Request failed with status: {}", status));
+        return Err(Error::NonOkStatus(url, status));
     }
     Ok(response)
 }
 
-async fn receive_body(response: reqwest::Response) -> Result<String, String> {
-    response
-        .text()
-        .await
-        .map_err(|e| format!("Failed to read response body: {e}"))
-}
-
-fn full_error_stack(mut e: &dyn Error) -> String {
-    let mut s = format!("{e}");
-    while let Some(src) = e.source() {
-        s.push_str(&format!(": {}", src));
-        e = src;
-    }
-    s
+async fn receive_body(response: reqwest::Response) -> Result<String, Error> {
+    response.text().await.map_err(Error::ReceiveBody)
 }

@@ -1,5 +1,6 @@
 use crate::{
     api,
+    error::Error,
     types::{CHECK_RUN_CONCLUSION, CheckRun, TokenResponse},
 };
 use serde::{Deserialize, Serialize};
@@ -49,15 +50,11 @@ pub struct Client {
 impl Client {
     /// Create a new GitHub client with the provided options.
     /// Will read the private key from the file system.
-    pub fn build(options: ClientOptions) -> Result<Self, String> {
-        let key = std::fs::read_to_string(&options.private_key).map_err(|e| {
-            format!(
-                "Failed to read private key '{}': {}",
-                &options.private_key, e
-            )
-        })?;
-        let key = jsonwebtoken::EncodingKey::from_rsa_pem(key.as_bytes())
-            .map_err(|e| format!("Failed to create encoding key: {e}"))?;
+    pub fn build(options: ClientOptions) -> Result<Self, Error> {
+        let key = std::fs::read_to_string(&options.private_key)
+            .map_err(|e| Error::ReadPrivateKey(options.private_key.clone(), e))?;
+        let key =
+            jsonwebtoken::EncodingKey::from_rsa_pem(key.as_bytes()).map_err(Error::EncodingKey)?;
         Ok(Client {
             client_id: options.client_id,
             key,
@@ -72,15 +69,14 @@ impl Client {
     }
 
     /// Get an installations token for the GitHub App.
-    async fn get_token(&self, app_installation_id: u64) -> Result<String, String> {
+    async fn get_token(&self, app_installation_id: u64) -> Result<String, Error> {
         if let Some(token) = self.get_cached_token(app_installation_id).await {
             return Ok(token);
         }
 
         let claims = JWTClaims::new(&self.client_id);
         let header = jsonwebtoken::Header::new(jsonwebtoken::Algorithm::RS256);
-        let jwt = jsonwebtoken::encode(&header, &claims, &self.key)
-            .map_err(|e| format!("Failed to create JWT token: {e}"))?;
+        let jwt = jsonwebtoken::encode(&header, &claims, &self.key).map_err(Error::JWT)?;
         let token = api::get_installation_token(&self.api, &jwt, app_installation_id).await?;
 
         let mut cache = self.token_cache.lock().await;
@@ -97,11 +93,8 @@ impl Client {
         app_installation_id: u64,
         repo: &str,
         commit: &str,
-    ) -> Result<(), String> {
-        let token = self
-            .get_token(app_installation_id)
-            .await
-            .map_err(|e| format!("Failed to get token: {e}"))?;
+    ) -> Result<(), Error> {
+        let token = self.get_token(app_installation_id).await?;
 
         api::create_check_run(&self.api, &token, repo, &CheckRun::new(commit)).await
     }
@@ -112,11 +105,10 @@ impl Client {
         app_installation_id: u64,
         repo: &str,
         commit: &str,
-    ) -> Result<(u32, Option<CheckRun>), String> {
+    ) -> Result<(u32, Option<CheckRun>), Error> {
         let check_runs = self
             .get_check_runs(app_installation_id, repo, commit)
-            .await
-            .map_err(|e| format!("Failed to get check runs: {e}"))?;
+            .await?;
         debug!(
             "Found {} check runs for commit '{}' in repository '{}'",
             check_runs.len(),
@@ -135,11 +127,8 @@ impl Client {
         commit: &str,
         count: u32,
         check_run: Option<CheckRun>,
-    ) -> Result<(), String> {
-        let token = self
-            .get_token(app_installation_id)
-            .await
-            .map_err(|e| format!("Failed to get token: {e}"))?;
+    ) -> Result<(), Error> {
+        let token = self.get_token(app_installation_id).await?;
 
         match check_run {
             Some(mut run) => {
@@ -166,11 +155,8 @@ impl Client {
         app_installation_id: u64,
         repo: &str,
         commit: &str,
-    ) -> Result<Vec<CheckRun>, String> {
-        let token = self
-            .get_token(app_installation_id)
-            .await
-            .map_err(|e| format!("Failed to get token: {e}"))?;
+    ) -> Result<Vec<CheckRun>, Error> {
+        let token = self.get_token(app_installation_id).await?;
 
         api::get_check_runs(&self.api, &token, repo, commit).await
     }
