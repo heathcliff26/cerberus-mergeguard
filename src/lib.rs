@@ -5,6 +5,7 @@ use tracing::Level;
 mod api;
 mod client;
 mod config;
+mod error;
 mod server;
 #[cfg(test)]
 mod test;
@@ -28,13 +29,12 @@ pub struct App {
 
 impl App {
     /// Run the application based on the provided command and options.
-    pub async fn run(self) -> Result<(), String> {
+    pub async fn run(self) -> Result<(), error::Error> {
         if let Command::Version = self.command {
             version::print_version_and_exit();
         }
 
-        let config = config::Configuration::load(&self.global_opts.config)
-            .map_err(|e| format!("Failed to load configuration: {e}"))?;
+        let config = config::Configuration::load(&self.global_opts.config)?;
 
         let log_level = match self.global_opts.log {
             Some(level) => level,
@@ -164,7 +164,7 @@ fn set_log_level(level: &str) {
 async fn get_and_print_status(
     cli_opts: &CLIOptions,
     client: &client::Client,
-) -> Result<(u32, Option<types::CheckRun>), String> {
+) -> Result<(u32, Option<types::CheckRun>), error::Error> {
     let (count, own_run) = client
         .get_check_run_status(
             cli_opts.app_installation_id,

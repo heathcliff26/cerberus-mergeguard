@@ -1,4 +1,8 @@
-use crate::{client::Client, types::CheckRunEvent, types::PullRequestEvent};
+use crate::{
+    client::Client,
+    error::Error,
+    types::{CheckRunEvent, PullRequestEvent},
+};
 use axum::{
     Json, Router,
     extract::State,
@@ -117,7 +121,7 @@ impl Server {
 
     /// Run the server
     /// Server will shutdown gracefully on Ctrl+C or SIGTERM
-    pub async fn run(&self, github: Client) -> Result<(), String> {
+    pub async fn run(&self, github: Client) -> Result<(), Error> {
         let state = ServerState::new(self.options.webhook_secret.clone(), github);
         let router = new_router(state);
 
@@ -128,21 +132,21 @@ impl Server {
             let listener =
                 tls::TlsListener::bind(addr, &self.options.ssl.key, &self.options.ssl.cert)
                     .await
-                    .map_err(|e| format!("Failed to bind to port with SSL: {e}"))?;
+                    .map_err(|e| Error::BindPort(Box::new(e)))?;
 
             axum::serve(listener, router)
                 .with_graceful_shutdown(shutdown_signal())
                 .await
-                .map_err(|e| format!("Server error: {e}"))
+                .map_err(Error::Serve)
         } else {
             let listener = TcpListener::bind(addr)
                 .await
-                .map_err(|e| format!("Failed to bind to port: {e}"))?;
+                .map_err(|e| Error::BindPort(Box::new(e)))?;
 
             axum::serve(listener, router)
                 .with_graceful_shutdown(shutdown_signal())
                 .await
-                .map_err(|e| format!("Server error: {e}"))
+                .map_err(Error::Serve)
         }
     }
 }

@@ -113,20 +113,20 @@ impl ExpectedRequests {
     pub fn response(&self) -> (StatusCode, String) {
         match self {
             ExpectedRequests::GetInstallationToken(status, token_response) => (
-                status.clone(),
+                *status,
                 serde_json::to_string(&token_response).expect("Failed to serialize token response"),
             ),
             ExpectedRequests::GetCheckRuns(status, check_runs_response) => (
-                status.clone(),
+                *status,
                 serde_json::to_string(&check_runs_response)
                     .expect("Failed to serialize token response"),
             ),
             ExpectedRequests::CreateCheckRun(status, check_run) => (
-                status.clone(),
+                *status,
                 serde_json::to_string(&check_run).expect("Failed to serialize token response"),
             ),
             ExpectedRequests::UpdateCheckRun(status, check_run) => (
-                status.clone(),
+                *status,
                 serde_json::to_string(&check_run).expect("Failed to serialize token response"),
             ),
         }

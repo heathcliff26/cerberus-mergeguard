@@ -1,4 +1,4 @@
-use crate::{client, server};
+use crate::{client, error::Error, server};
 use serde::{Deserialize, Serialize};
 use std::fs;
 
@@ -23,15 +23,15 @@ fn default_log_level() -> String {
 
 impl Configuration {
     /// Load the configuration from a file
-    pub fn load(path: &str) -> Result<Self, String> {
+    pub fn load(path: &str) -> Result<Self, Error> {
         // TODO: Replace with supported version
-        let contents = fs::read_to_string(path)
-            .map_err(|e| format!("Failed to read config file '{}': {}", path, e))?;
+        let contents =
+            fs::read_to_string(path).map_err(|e| Error::ReadConfigFile(path.to_string(), e))?;
 
         let config: Self = serde_yaml::from_str(&contents)
-            .map_err(|e| format!("Failed to parse config file '{}': {}", path, e))?;
+            .map_err(|e| Error::ParseConfigFile(path.to_string(), e))?;
 
-        config.validate()?;
+        config.validate().map_err(Error::InvalidConfig)?;
         Ok(config)
     }
 

@@ -97,7 +97,7 @@ async fn pull_request_event() {
     let state = server.state.lock().await;
 
     // Check that the token request was made
-    let request = state.requests.get(0).expect("Should have token request");
+    let request = state.requests.first().expect("Should have token request");
     assert_eq!("POST", request.method.as_str(), "Method should be POST");
     assert_eq!(
         "/app/installations/123456/access_tokens",
@@ -181,7 +181,7 @@ async fn check_run_event_incomplete() {
 
     let check_run_event = CheckRunEvent {
         action: "created".to_string(),
-        check_run: check_run,
+        check_run,
         installation: Some(Installation { id: 123456 }),
         repository: Repo {
             id: 12345678,
@@ -207,7 +207,7 @@ async fn check_run_event_incomplete() {
     let state = server.state.lock().await;
 
     // Check that the token request was made
-    let request = state.requests.get(0).expect("Should have token request");
+    let request = state.requests.first().expect("Should have token request");
     assert_eq!("POST", request.method.as_str(), "Method should be POST");
     assert_eq!(
         "/app/installations/123456/access_tokens",
@@ -276,7 +276,7 @@ async fn check_run_event_ignore_own() {
 
     let check_run_event = CheckRunEvent {
         action: "created".to_string(),
-        check_run: check_run,
+        check_run,
         installation: Some(Installation { id: 123456 }),
         repository: Repo {
             id: 12345678,
