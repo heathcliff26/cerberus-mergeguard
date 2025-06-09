@@ -103,3 +103,15 @@ fn parse_token_response() {
 
     assert_eq!("ghs_16C7e42F292c6912E7710c838347Ae178B4a", token.token);
 }
+
+#[test]
+fn parse_pull_request_response() {
+    let test_body = include_str!("testdata/pr-response.json");
+
+    let pr: PullRequestResponse = match serde_json::from_str(test_body) {
+        Ok(pr) => pr,
+        Err(e) => panic!("Failed to parse pull request response: {e}"),
+    };
+
+    assert_eq!(1347, pr.number);
+}

@@ -106,6 +106,7 @@ pub enum ExpectedRequests {
     GetCheckRuns(StatusCode, CheckRunsResponse),
     CreateCheckRun(StatusCode, CheckRun),
     UpdateCheckRun(StatusCode, CheckRun),
+    GetPullRequest(StatusCode, PullRequestResponse),
 }
 
 impl ExpectedRequests {
@@ -128,6 +129,11 @@ impl ExpectedRequests {
             ExpectedRequests::UpdateCheckRun(status, check_run) => (
                 *status,
                 serde_json::to_string(&check_run).expect("Failed to serialize token response"),
+            ),
+            ExpectedRequests::GetPullRequest(status, pull_request_response) => (
+                *status,
+                serde_json::to_string(&pull_request_response)
+                    .expect("Failed to serialize pull request response"),
             ),
         }
     }

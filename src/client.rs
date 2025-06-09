@@ -99,6 +99,20 @@ impl Client {
         api::create_check_run(&self.api, &token, repo, &CheckRun::new(commit)).await
     }
 
+    /// Refresh the check_run status based on the current status.
+    /// Will fetch the current check-runs first and then update the check-run status.
+    /// This means 2 API calls will be made.
+    pub async fn refresh_check_run_status(
+        &self,
+        app_id: u64,
+        repo: &str,
+        commit: &str,
+    ) -> Result<(), Error> {
+        let (uncompleted, own_run) = self.get_check_run_status(app_id, repo, commit).await?;
+        self.update_check_run(app_id, repo, commit, uncompleted, own_run)
+            .await
+    }
+
     /// Get the combined status of all check-runs for a commit.
     pub async fn get_check_run_status(
         &self,
@@ -146,6 +160,20 @@ impl Client {
                 api::create_check_run(&self.api, &token, repo, &run).await
             }
         }
+    }
+
+    /// Get the current head commit for a pull request.
+    pub async fn get_pull_request_head_commit(
+        &self,
+        app_installation_id: u64,
+        repo: &str,
+        pull_number: u64,
+    ) -> Result<String, Error> {
+        let token = self.get_token(app_installation_id).await?;
+
+        let pr = api::get_pull_request(&self.api, &token, repo, pull_number).await?;
+
+        Ok(pr.head.sha)
     }
 
     /// Return a list of current check runs for a commit in a repository.

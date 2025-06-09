@@ -78,11 +78,14 @@ In order to create and update status checks, github requires an app. To create a
    - GitHub App name: The display name of your app, e.g. Cerberus Mergeguard
    - Homepage URL: URL to your Website
    - Webhook URL: The URL where your bot is running, e.g. <https://example.org/webhook>
-   - Webhook Secret: Optional create a random string to enter here, to verify that webhook requests are send by github
+   - Webhook Secret: Optional create a random string to enter here, to verify that webhook requests are sent by github
    - Permissions -> Repository permissions:
      - Checks: Read/Write
+     - Issues: Read
+     - Pull requests: Read
    - Events:
      - Check run
+     - Issue comment
      - Pull request
 6. After creating your app, go to your app -> "Private Keys" and generate a new key
 
