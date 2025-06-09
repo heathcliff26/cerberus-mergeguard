@@ -110,6 +110,30 @@ pub async fn update_check_run(
     }
 }
 
+/// Get the current status of a pull request.
+/// API endpoint: GET /repos/{owner}/{repo}/pulls/{pull_number}
+pub async fn get_pull_request(
+    endpoint: &str,
+    token: &str,
+    repo: &str,
+    pull_number: u64,
+) -> Result<PullRequestResponse, Error> {
+    let url = format!("{endpoint}/repos/{repo}/pulls/{pull_number}");
+    info!("Fetching pull request from '{url}'");
+
+    let client = new_client_with_common_headers(token)?;
+    let response = send_request(client.get(&url)).await?;
+    let response = receive_body(response).await?;
+
+    match serde_json::from_str::<PullRequestResponse>(&response) {
+        Ok(pull_request) => Ok(pull_request),
+        Err(e) => {
+            debug!("Response body: '{}'", response);
+            Err(Error::Parse("get_pull_request", Box::new(e)))
+        }
+    }
+}
+
 fn new_client_with_common_headers(token: &str) -> Result<Client, Error> {
     let mut headers = HeaderMap::new();
     headers.insert(

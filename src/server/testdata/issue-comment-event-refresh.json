@@ -1,0 +1,19 @@
+{
+  "action": "created",
+  "issue": {
+    "id": 3130403522,
+    "number": 56
+  },
+  "comment": {
+    "id": 2955890178,
+    "body": "/cerberus refresh"
+  },
+  "repository": {
+    "id": 990804936,
+    "name": "cerberus-mergeguard",
+    "full_name": "heathcliff26/cerberus-mergeguard"
+  },
+  "installation": {
+    "id": 68583790
+  }
+}

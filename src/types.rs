@@ -39,6 +39,16 @@ pub struct CheckRunEvent {
     pub repository: Repo,
 }
 
+/// Partial fields of an issue_comment event webhook payload.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct IssueCommentEvent {
+    pub action: String,
+    pub issue: Issue,
+    pub comment: Comment,
+    pub installation: Option<Installation>,
+    pub repository: Repo,
+}
+
 /// Partial fields of a pull_request object.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PullRequest {
@@ -174,6 +184,20 @@ pub struct Installation {
     pub id: u64,
 }
 
+/// Partial fields of a comment object.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Comment {
+    pub id: u64,
+    pub body: String,
+}
+
+/// Partial fields of an issue object.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Issue {
+    pub id: u64,
+    pub number: u64,
+}
+
 /// Response to check-run requests from the GitHub API.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CheckRunsResponse {
@@ -186,4 +210,12 @@ pub struct CheckRunsResponse {
 pub struct TokenResponse {
     pub token: String,
     pub expires_at: DateTime<Utc>,
+}
+
+/// Response to get pull request from the GitHub API.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PullRequestResponse {
+    pub id: u64,
+    pub number: u64,
+    pub head: BranchRef,
 }

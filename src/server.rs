@@ -1,7 +1,7 @@
 use crate::{
     client::Client,
     error::Error,
-    types::{CheckRunEvent, PullRequestEvent},
+    types::{CheckRunEvent, IssueCommentEvent, PullRequestEvent},
 };
 use axum::{
     Json, Router,
@@ -201,6 +201,7 @@ async fn webhook_handler(
     match event {
         "check_run" => handle_check_run_event(&state.github, &payload).await,
         "pull_request" => handle_pull_request_event(&state.github, &payload).await,
+        "issue_comment" => handle_issue_comment_event(&state.github, &payload).await,
         event => {
             let message = format!("Received unsupported event: {}", event);
             info!("{message}");
@@ -350,35 +351,94 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
         }
     };
 
-    let (uncompleted, own_run) = match client
-        .get_check_run_status(
+    match client
+        .refresh_check_run_status(
             app_id,
             &payload.repository.full_name,
             &payload.check_run.head_sha,
         )
         .await
     {
-        Ok(check_runs) => check_runs,
+        Ok(_) => (StatusCode::OK, Json(Response::new())),
         Err(e) => {
-            error!("{e}");
-            return (
+            error!("Failed to refresh check-run status: {e}");
+            (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(Response::error("Failed to get check-runs")),
+                Json(Response::error("Failed to refresh check-run status")),
+            )
+        }
+    }
+}
+
+/// Handle webhook issue_comment events
+async fn handle_issue_comment_event(
+    client: &Client,
+    payload: &str,
+) -> (StatusCode, Json<Response>) {
+    let payload: IssueCommentEvent = match serde_json::from_str(payload) {
+        Ok(event) => event,
+        Err(e) => {
+            warn!("Failed to parse issue_comment event payload: {e}");
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(Response::error("Invalid issue_comment event payload")),
             );
         }
     };
-    if let Err(e) = client
-        .update_check_run(
-            app_id,
-            &payload.repository.full_name,
-            &payload.check_run.head_sha,
-            uncompleted,
-            own_run,
-        )
+
+    let app_id = match payload.installation {
+        Some(installation) => installation.id,
+        None => {
+            warn!("Missing app installation id in issue_comment event");
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(Response::error("Missing app installation id")),
+            );
+        }
+    };
+
+    if payload.action != "created" {
+        debug!(
+            "Ignoring issue_comment event with action: {}",
+            payload.action
+        );
+        return (StatusCode::OK, Json(Response::new()));
+    }
+
+    if !payload.comment.body.contains("/cerberus refresh") {
+        debug!("Ignoring issue comment without '/cerberus' command");
+        return (StatusCode::OK, Json(Response::new()));
+    }
+    info!(
+        "Received issue_comment event for issue {}: {}",
+        payload.issue.number, payload.comment.body
+    );
+
+    let commit = match client
+        .get_pull_request_head_commit(app_id, &payload.repository.full_name, payload.issue.number)
         .await
     {
-        error!("Failed to update check-run: {e}");
+        Ok(commit) => commit,
+        Err(e) => {
+            error!("Failed to get pull request head commit: {e}");
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(Response::error("Failed to get pull request head commit")),
+            );
+        }
+    };
+
+    if let Err(e) = client
+        .refresh_check_run_status(app_id, &payload.repository.full_name, &commit)
+        .await
+    {
+        error!("Failed to refresh check-run status: {e}");
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(Response::error("Failed to refresh check-run status")),
+        );
     }
+
     (StatusCode::OK, Json(Response::new()))
 }
 

@@ -1,3 +1,7 @@
+use crate::testutils::{ExpectedRequests, MockGithubApiServer, TlsCertificate};
+use crate::{client::Client, client::ClientOptions, types::*};
+use std::collections::VecDeque;
+
 use super::*;
 
 #[tokio::test]
@@ -88,6 +92,113 @@ verify_webhook_test! {
         verify_webhook_ok_result(),
     ),
 
+}
+
+#[tokio::test]
+async fn ignore_webhook_comment_without_command() {
+    let payload = include_str!("testdata/issue-comment-event-ignored.json");
+
+    let mut headers = HeaderMap::new();
+    headers.insert("X-GitHub-Event", HeaderValue::from_static("issue_comment"));
+
+    let state = ServerState::new(
+        None,
+        Client::new_for_testing("testid", "testsecret", "https://noops.example.com"),
+    );
+    let state = State(state);
+
+    let (status, _) = webhook_handler(headers, state, payload.to_string()).await;
+
+    assert_eq!(
+        StatusCode::OK,
+        status,
+        "Should return OK for ignored comment"
+    );
+}
+
+#[tokio::test]
+async fn handle_webhook_comment_refresh_command() {
+    // Prepare the payload for the refresh command
+    let payload = include_str!("testdata/issue-comment-event-refresh.json");
+
+    // Prepare expected requests for the mock GitHub API
+    let token = "test_token";
+    let commit = "abc123";
+    let client_id = "test-client-id";
+    let mut own_run = CheckRun::new(commit);
+    own_run.id = 123456;
+    // Status should be success, so the server does not attempt to update it.
+    own_run.update_status(0);
+    own_run.app = Some(App {
+        id: 123456,
+        client_id: client_id.to_string(),
+        slug: "test-app".to_string(),
+        name: "test-app".to_string(),
+    });
+    let expected_requests = VecDeque::from(vec![
+        ExpectedRequests::GetInstallationToken(
+            StatusCode::OK,
+            TokenResponse {
+                token: token.to_string(),
+                expires_at: chrono::Utc::now() + chrono::Duration::seconds(3600),
+            },
+        ),
+        ExpectedRequests::GetPullRequest(
+            StatusCode::OK,
+            PullRequestResponse {
+                id: 123456,
+                number: 42,
+                head: BranchRef {
+                    label: "feature-branch".to_string(),
+                    ref_field: "feature-branch".to_string(),
+                    sha: commit.to_string(),
+                    repo: Repo {
+                        id: 7890,
+                        name: "test-repo".to_string(),
+                        full_name: "test-org/test-repo".to_string(),
+                    },
+                },
+            },
+        ),
+        ExpectedRequests::GetCheckRuns(
+            StatusCode::OK,
+            CheckRunsResponse {
+                total_count: 1,
+                check_runs: vec![own_run],
+            },
+        ),
+    ]);
+
+    // Start the mock server
+    let server = MockGithubApiServer::new(expected_requests);
+    let api_addr = server.start().await;
+
+    // Prepare server state and headers
+    let certificate = TlsCertificate::create(
+        "/tmp/cerberus-mergeguard_handle_webhook_comment_refresh_command_test",
+    );
+    let client_options = ClientOptions {
+        client_id: client_id.to_string(),
+        private_key: certificate.key.to_string(),
+        api: api_addr.to_string(),
+    };
+    let github = Client::build(client_options).expect("Failed to build GitHub client");
+    let state = ServerState::new(None, github);
+    let state = State(state);
+
+    let mut headers = HeaderMap::new();
+    headers.insert("X-GitHub-Event", HeaderValue::from_static("issue_comment"));
+
+    // Call the webhook handler
+    let (status, response) = webhook_handler(headers, state, payload.to_string()).await;
+
+    // Assert the webhook was handled successfully
+    assert_eq!(
+        StatusCode::OK,
+        status,
+        "Should return OK for refresh command, response: {:?}",
+        response
+    );
 }
 
 fn verify_webhook_ok_result() -> Result<(), (StatusCode, Json<Response>)> {
