@@ -1,0 +1,7 @@
+---
+github:
+  client-id: "test-client-id"
+  private-key: "test-private-key.pem"
+
+server:
+  periodic-refresh: 60

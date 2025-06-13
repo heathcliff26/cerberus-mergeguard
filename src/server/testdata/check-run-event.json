@@ -1,0 +1,38 @@
+{
+  "action": "completed",
+  "check_run": {
+    "id": 43192137255,
+    "name": "some-check-run",
+    "head_sha": "253f31d91db3a05dcf75c0e8135309491fed8669",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2025-05-30T14:28:11Z",
+    "completed_at": "2025-05-30T14:29:17Z",
+    "output": {
+      "title": "Test",
+      "summary": "Filler for test"
+    },
+    "app": {
+      "id": 1329963,
+      "client_id": "unknown-client-id",
+      "slug": "some-app",
+      "owner": {
+        "login": "heathcliff26",
+        "id": 21662658
+      },
+      "name": "Some App"
+    }
+  },
+  "repository": {
+    "id": 686595501,
+    "name": "cerberus-mergeguard",
+    "full_name": "heathcliff26/cerberus-mergeguard"
+  },
+  "sender": {
+    "login": "heathcliff26",
+    "id": 143866472
+  },
+  "installation": {
+    "id": 68583790
+  }
+}

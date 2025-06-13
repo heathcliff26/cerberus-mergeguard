@@ -13,8 +13,7 @@ use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tokio::net::TcpListener;
-use tokio::signal;
+use tokio::{net::TcpListener, signal, sync::Mutex, time::Duration};
 use tower_http::trace::TraceLayer;
 use tracing::{debug, error, info, warn};
 
@@ -29,7 +28,7 @@ pub const SERVER_MESSAGE_OK: &str = "Server is running fine";
 
 /// Options for the http server
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(default)]
+#[serde(default, rename_all = "kebab-case")]
 pub struct ServerOptions {
     /// Port to bind to, defaults to 8080
     #[serde(default = "default_port")]
@@ -40,6 +39,13 @@ pub struct ServerOptions {
 
     /// Shared webhook secret for verifying the webhook sender
     pub webhook_secret: Option<String>,
+
+    /// Refresh check runs periodically instead of on every webhook event
+    /// This is useful for reducing the number of API calls to GitHub.
+    /// When set to zero, periodic refresh is disabled.
+    /// Unit is in seconds.
+    #[serde(default = "Default::default")]
+    pub periodic_refresh: u64,
 }
 
 fn default_port() -> u16 {
@@ -62,6 +68,7 @@ impl Default for ServerOptions {
             port: default_port(),
             webhook_secret: std::env::var("CERBERUS_WEBHOOK_SECRET").ok(),
             ssl: SSLOptions::default(),
+            periodic_refresh: 0,
         }
     }
 }
@@ -91,6 +98,14 @@ impl SSLOptions {
     }
 }
 
+/// Job for refreshing check runs
+#[derive(Debug, Ord, PartialEq, PartialOrd, Eq)]
+struct Job {
+    app_installation_id: u64,
+    repo: String,
+    commit: String,
+}
+
 /// HTTP Server for receiving webhook events from GitHub
 pub struct Server {
     options: ServerOptions,
@@ -100,16 +115,71 @@ pub struct Server {
 struct ServerState {
     webhook_secret: Option<String>,
     github: Arc<Client>,
+    job_queue: Arc<Mutex<Vec<Job>>>,
+    use_job_queue: bool,
 }
 
 impl ServerState {
     /// Create a new server state with the given webhook secret and GitHub client
-    pub fn new(webhook_secret: Option<String>, github: Client) -> Self {
+    fn new(webhook_secret: Option<String>, github: Client) -> Self {
         let github = Arc::new(github);
         Self {
             webhook_secret,
             github,
+            job_queue: Arc::new(Mutex::new(Vec::new())),
+            use_job_queue: false,
         }
+    }
+
+    /// Create a new pending job and add it to the job queue
+    async fn new_job(&self, app_installation_id: u64, repo: &str, commit: &str) {
+        let job = Job {
+            app_installation_id,
+            repo: repo.to_string(),
+            commit: commit.to_string(),
+        };
+        let mut job_queue = self.job_queue.lock().await;
+        job_queue.push(job);
+    }
+
+    /// Start a background task that periodically runs all jobs in the queue
+    fn periodically_run_job_queue(&mut self, period: u64) {
+        let job_queue = self.job_queue.clone();
+        let github = self.github.clone();
+
+        info!(
+            "Periodic refresh of check runs enabled with a period of {} seconds",
+            period,
+        );
+
+        self.use_job_queue = true;
+        tokio::spawn(async move {
+            let period = Duration::from_secs(period);
+            loop {
+                tokio::time::sleep(period).await;
+
+                let mut job_queue = job_queue.lock().await;
+                if job_queue.is_empty() {
+                    continue;
+                }
+
+                deduplicate_jobs(job_queue.as_mut());
+
+                info!("Running {} jobs in the queue", job_queue.len());
+
+                for job in job_queue.drain(..) {
+                    if let Err(e) = github
+                        .refresh_check_run_status(job.app_installation_id, &job.repo, &job.commit)
+                        .await
+                    {
+                        error!(
+                            "Failed to refresh check run status for job: '{}' - '{}': {}",
+                            job.repo, job.commit, e
+                        );
+                    }
+                }
+            }
+        });
     }
 }
 
@@ -122,7 +192,10 @@ impl Server {
     /// Run the server
     /// Server will shutdown gracefully on Ctrl+C or SIGTERM
     pub async fn run(&self, github: Client) -> Result<(), Error> {
-        let state = ServerState::new(self.options.webhook_secret.clone(), github);
+        let mut state = ServerState::new(self.options.webhook_secret.clone(), github);
+        if self.options.periodic_refresh > 0 {
+            state.periodically_run_job_queue(self.options.periodic_refresh);
+        }
         let router = new_router(state);
 
         let addr = SocketAddr::from(([0, 0, 0, 0, 0, 0, 0, 0], self.options.port));
@@ -199,7 +272,7 @@ async fn webhook_handler(
     }
 
     match event {
-        "check_run" => handle_check_run_event(&state.github, &payload).await,
+        "check_run" => handle_check_run_event(state.0, &payload).await,
         "pull_request" => handle_pull_request_event(&state.github, &payload).await,
         "issue_comment" => handle_issue_comment_event(&state.github, &payload).await,
         event => {
@@ -319,7 +392,7 @@ async fn handle_pull_request_event(client: &Client, payload: &str) -> (StatusCod
 }
 
 /// Handle webhook check_run events
-async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, Json<Response>) {
+async fn handle_check_run_event(state: ServerState, payload: &str) -> (StatusCode, Json<Response>) {
     let payload: CheckRunEvent = match serde_json::from_str(payload) {
         Ok(event) => event,
         Err(e) => {
@@ -334,7 +407,7 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
     if payload
         .check_run
         .app
-        .is_some_and(|app| app.client_id == client.client_id())
+        .is_some_and(|app| app.client_id == state.github.client_id())
     {
         debug!("Ignoring check_run event from our own app");
         return (StatusCode::OK, Json(Response::new()));
@@ -351,7 +424,19 @@ async fn handle_check_run_event(client: &Client, payload: &str) -> (StatusCode, 
         }
     };
 
-    match client
+    if state.use_job_queue {
+        state
+            .new_job(
+                app_id,
+                &payload.repository.full_name,
+                &payload.check_run.head_sha,
+            )
+            .await;
+        return (StatusCode::OK, Json(Response::new()));
+    }
+
+    match state
+        .github
         .refresh_check_run_status(
             app_id,
             &payload.repository.full_name,
@@ -493,4 +578,10 @@ async fn shutdown_signal() {
         _ = ctrl_c => {},
         _ = terminate => {},
     }
+}
+
+/// Remove duplicates from job queue
+fn deduplicate_jobs(job_queue: &mut Vec<Job>) {
+    job_queue.sort();
+    job_queue.dedup();
 }
