@@ -2,6 +2,9 @@ use crate::{client, error::Error, server};
 use serde::{Deserialize, Serialize};
 use std::fs;
 
+#[cfg(test)]
+mod test;
+
 /// Configuration options for the bot
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "kebab-case")]

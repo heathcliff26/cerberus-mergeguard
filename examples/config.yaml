@@ -18,6 +18,13 @@ server:
   webhook-secret: ""
 
   # Optional, can be omitted
+  # Set the interval in seconds in which the server should update check-runs.
+  # This limits the number of api requests to github by bundling updates for multiple webhook events for the same commit.
+  # When disabled, the server will update check-runs immediately after receiving a webhook event.
+  # Default: 0s (disabled)
+  periodic-refresh: 0
+
+  # Optional, can be omitted
   # The SSL configuration.
   ssl:
     # Optional, can be omitted
