@@ -224,7 +224,7 @@ impl Client {
                     if run
                         .conclusion
                         .as_ref()
-                        .is_some_and(|v| v == CHECK_RUN_CONCLUSION)
+                        .is_some_and(|v| v == CHECK_RUN_CONCLUSION || v == "skipped")
                     {
                         debug!("Check run '{}' is completed successfully", run.name);
                     } else {
