@@ -276,7 +276,7 @@ async fn webhook_handler(
         "pull_request" => handle_pull_request_event(&state.github, &payload).await,
         "issue_comment" => handle_issue_comment_event(&state.github, &payload).await,
         event => {
-            let message = format!("Received unsupported event: {}", event);
+            let message = format!("Received unsupported event: {event}");
             info!("{message}");
             (StatusCode::NOT_IMPLEMENTED, Json(Response::error(&message)))
         }
