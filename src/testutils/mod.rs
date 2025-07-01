@@ -160,7 +160,7 @@ async fn handle_request(
     if let Some(expected) = state.expected_requests.pop_front() {
         expected.response()
     } else {
-        panic!("Unexpected request: {}", uri);
+        panic!("Unexpected request: {uri}");
     }
 }
 
@@ -179,7 +179,7 @@ impl TmpTestConfigFile {
         let suffix: u64 = rand::random();
 
         let file = std::env::temp_dir()
-            .join(format!("cerberus_test_config_{}.yaml", suffix))
+            .join(format!("cerberus_test_config_{suffix}.yaml"))
             .to_str()
             .expect("Failed to convert path to string")
             .to_string();

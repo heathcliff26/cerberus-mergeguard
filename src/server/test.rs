@@ -18,10 +18,7 @@ async fn ignore_own_check_run() {
     let (status, response) =
         handle_check_run_event(ServerState::new(None, github), test_body).await;
     if status != StatusCode::OK {
-        panic!(
-            "Should have ignored event and returned OK, got: {}, message={:?}",
-            status, response
-        );
+        panic!("Should have ignored event and returned OK, got: {status}, message={response:?}");
     }
 }
 
@@ -198,8 +195,7 @@ async fn handle_webhook_comment_refresh_command() {
     assert_eq!(
         StatusCode::OK,
         status,
-        "Should return OK for refresh command, response: {:?}",
-        response
+        "Should return OK for refresh command, response: {response:?}"
     );
 }
 
@@ -243,8 +239,7 @@ async fn webhook_check_run_job_queue() {
     assert_eq!(
         StatusCode::OK,
         status,
-        "Should return OK for refresh command, response: {:?}",
-        response
+        "Should return OK for refresh command, response: {response:?}"
     );
 
     let job_queue = state.0.job_queue.lock().await;

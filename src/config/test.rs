@@ -4,10 +4,10 @@ use super::*;
 fn test_periodic_refresh() {
     let cfg = match Configuration::load("src/config/testdata/periodic-refresh.yaml") {
         Ok(cfg) => cfg,
-        Err(e) => panic!("Failed to load configuration: {:?}", e),
+        Err(e) => panic!("Failed to load configuration: {e:?}"),
     };
 
-    println!("Loaded configuration: {:?}", cfg);
+    println!("Loaded configuration: {cfg:?}");
 
     assert_eq!(
         60, cfg.server.periodic_refresh,

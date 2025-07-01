@@ -74,7 +74,7 @@ impl std::error::Error for Error {}
 fn full_error_stack(mut e: &dyn std::error::Error) -> String {
     let mut s = format!("{e}");
     while let Some(src) = e.source() {
-        s.push_str(&format!(": {}", src));
+        s.push_str(&format!(": {src}"));
         e = src;
     }
     s
