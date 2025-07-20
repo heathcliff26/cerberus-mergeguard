@@ -20,17 +20,17 @@ exclude = [
 
 [dependencies]
 axum = { version = "0.8.4", default-features = false, features = ["http2", "json", "tokio", "tracing"] }
-clap = { version = "4.5.39", features = ["derive"] }
+clap = { version = "4.5.41", features = ["derive"] }
 hmac = "0.12.1"
 jsonwebtoken = { version = "9.3.1", features = ["use_pem"] }
-reqwest = { version = "0.12.18", default-features = false, features = ["http2", "default-tls", "json"] }
+reqwest = { version = "0.12.22", default-features = false, features = ["http2", "default-tls", "json"] }
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
+serde_json = "1.0.141"
 serde_yaml = "0.9.34"
 sha2 = "0.10.9"
-tokio = { version = "1.45.1", features = ["rt-multi-thread", "net", "macros", "sync", "signal"] }
+tokio = { version = "1.46.1", features = ["rt-multi-thread", "net", "macros", "sync", "signal"] }
 tokio-native-tls = "0.3.1"
-tower-http = { version = "0.6.4", features = ["trace"] }
+tower-http = { version = "0.6.6", features = ["trace"] }
 tracing = { version = "0.1.41", features = ["max_level_debug", "release_max_level_debug"] }
 tracing-subscriber = "0.3.19"
 rand = { version = "0.9.1", optional = true }
