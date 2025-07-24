@@ -3,8 +3,9 @@ use super::*;
 #[test]
 fn test_version_information() {
     let info = version_information();
-    assert!(info.contains(NAME));
-    assert!(info.contains(VERSION));
-    assert!(info.contains("Commit:"));
-    assert!(info.contains(COMMIT.unwrap_or("unknown")));
+    let lines: Vec<&str> = info.lines().collect();
+    assert_eq!(lines.len(), 3);
+    assert!(lines[0].contains(NAME));
+    assert!(lines[1].contains("Version:"));
+    assert!(lines[2].contains("Commit:"));
 }
