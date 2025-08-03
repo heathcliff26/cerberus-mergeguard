@@ -7,7 +7,7 @@ description = "Block github pull request merges until all status checks have pas
 readme = "README.md"
 repository = "https://github.com/heathcliff26/cerberus-mergeguard"
 license = "Apache-2.0"
-categories =["command-line-utilities"]
+categories = ["command-line-utilities"]
 exclude = [
     ".github",
     ".vscode",
@@ -19,22 +19,44 @@ exclude = [
 ]
 
 [dependencies]
-axum = { version = "0.8.4", default-features = false, features = ["http2", "json", "tokio", "tracing"] }
+axum = { version = "0.8.4", default-features = false, features = [
+    "http2",
+    "json",
+    "tokio",
+    "tracing",
+] }
 clap = { version = "4.5.41", features = ["derive"] }
 hmac = "0.12.1"
 jsonwebtoken = { version = "9.3.1", features = ["use_pem"] }
-reqwest = { version = "0.12.22", default-features = false, features = ["http2", "default-tls", "json"] }
+reqwest = { version = "0.12.22", default-features = false, features = [
+    "http2",
+    "default-tls",
+    "json",
+] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.141"
 serde_yaml = "0.9.34"
 sha2 = "0.10.9"
-tokio = { version = "1.46.1", features = ["rt-multi-thread", "net", "macros", "sync", "signal"] }
+tokio = { version = "1.46.1", features = [
+    "rt-multi-thread",
+    "net",
+    "macros",
+    "sync",
+    "signal",
+] }
 tokio-native-tls = "0.3.1"
 tower-http = { version = "0.6.6", features = ["trace"] }
-tracing = { version = "0.1.41", features = ["max_level_debug", "release_max_level_debug"] }
+tracing = { version = "0.1.41", features = [
+    "max_level_debug",
+    "release_max_level_debug",
+] }
 tracing-subscriber = "0.3.19"
 rand = { version = "0.9.1", optional = true }
-chrono = { version = "0.4.41", default-features = false, features = ["std", "serde", "now"] }
+chrono = { version = "0.4.41", default-features = false, features = [
+    "std",
+    "serde",
+    "now",
+] }
 
 [profile.release]
 strip = "symbols"
