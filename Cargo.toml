@@ -1,7 +1,7 @@
 [package]
 name = "cerberus-mergeguard"
-version = "0.3.3"
-authors = ["Heathcliff <heathcliff@heathcliff.eu"]
+version = "0.3.4"
+authors = ["Heathcliff <heathcliff@heathcliff.eu>"]
 edition = "2024"
 description = "Block github pull request merges until all status checks have passed"
 readme = "README.md"
