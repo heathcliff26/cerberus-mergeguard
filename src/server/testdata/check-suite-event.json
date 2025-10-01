@@ -1,0 +1,18 @@
+{
+  "action": "requested",
+  "check_suite": {
+    "id": 46662057759
+  },
+  "repository": {
+    "id": 990804936,
+    "name": "cerberus-mergeguard",
+    "full_name": "heathcliff26/cerberus-mergeguard"
+  },
+  "sender": {
+    "login": "heathcliff26",
+    "id": 21662658
+  },
+  "installation": {
+    "id": 68583790
+  }
+}

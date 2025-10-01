@@ -275,6 +275,7 @@ async fn webhook_handler(
         "check_run" => handle_check_run_event(state.0, &payload).await,
         "pull_request" => handle_pull_request_event(&state.github, &payload).await,
         "issue_comment" => handle_issue_comment_event(&state.github, &payload).await,
+        "check_suite" => (StatusCode::OK, Json(Response::new())), // Ignore check_suite events
         event => {
             let message = format!("Received unsupported event: {event}");
             info!("{message}");
