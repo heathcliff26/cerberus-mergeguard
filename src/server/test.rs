@@ -354,3 +354,21 @@ async fn run_periodic_job_queue() {
     let requests = &server.state.lock().await.requests;
     assert_eq!(3, requests.len(), "Should have made 3 requests");
 }
+
+#[tokio::test]
+async fn ignore_webhook_check_suite_event() {
+    let payload = include_str!("testdata/check-suite-event.json");
+
+    let mut headers = HeaderMap::new();
+    headers.insert("X-GitHub-Event", HeaderValue::from_static("check_suite"));
+
+    let state = ServerState::new(
+        None,
+        Client::new_for_testing("testid", "testsecret", "https://noops.example.com"),
+    );
+    let state = State(state);
+
+    let (status, _) = webhook_handler(headers, state, payload.to_string()).await;
+
+    assert_eq!(StatusCode::OK, status, "Should return OK for ignored event");
+}
