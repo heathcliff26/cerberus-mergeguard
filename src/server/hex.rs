@@ -1,6 +1,6 @@
 /// Decode a string of hex literals into a vector of bytes.
 pub fn decode_hex(s: &str) -> Result<Vec<u8>, String> {
-    if s.len() % 2 != 0 {
+    if !s.len().is_multiple_of(2) {
         Err("Hex string must have an even length".to_string())
     } else {
         (0..s.len())
