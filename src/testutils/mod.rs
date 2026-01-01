@@ -204,9 +204,20 @@ pub struct TlsCertificate {
 
 impl TlsCertificate {
     /// Create a self signed TLS certificate and key pair.
-    pub fn create(name: &str) -> Self {
-        let key = format!("{name}.key").to_string();
-        let crt = format!("{name}.crt").to_string();
+    pub fn create(name: Option<&str>) -> Self {
+        let name = match name {
+            Some(n) => n.to_string(),
+            None => {
+                let suffix: u64 = rand::random();
+                std::env::temp_dir()
+                    .join(format!("cerberus_test_tls_cert_{suffix}"))
+                    .to_str()
+                    .expect("Failed to convert path to string")
+                    .to_string()
+            }
+        };
+        let key = format!("{name}.key");
+        let crt = format!("{name}.crt");
         println!("Creating TLS certificate '{crt}' and key '{key}' ");
         let output = Command::new("openssl")
             .args([

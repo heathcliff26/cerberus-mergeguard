@@ -173,9 +173,7 @@ async fn handle_webhook_comment_refresh_command() {
     let api_addr = server.start().await;
 
     // Prepare server state and headers
-    let certificate = TlsCertificate::create(
-        "/tmp/cerberus-mergeguard_handle_webhook_comment_refresh_command_test",
-    );
+    let certificate = TlsCertificate::create(None);
     let client_options = ClientOptions {
         client_id: client_id.to_string(),
         private_key: certificate.key.to_string(),
@@ -217,8 +215,7 @@ async fn webhook_check_run_job_queue() {
     let api_addr = server.start().await;
 
     // Prepare server state and headers
-    let certificate =
-        TlsCertificate::create("/tmp/cerberus-mergeguard_webhook_check_run_job_queue");
+    let certificate = TlsCertificate::create(None);
     let client_options = ClientOptions {
         client_id: "test-client-id".to_string(),
         private_key: certificate.key.to_string(),
@@ -328,7 +325,7 @@ async fn run_periodic_job_queue() {
     let server = MockGithubApiServer::new(expected_requests);
     let api_addr = server.start().await;
 
-    let certificate = TlsCertificate::create("/tmp/cerberus-mergeguard_run_periodic_job_queue");
+    let certificate = TlsCertificate::create(None);
     let client_options = ClientOptions {
         client_id: "test-client".to_string(),
         private_key: certificate.key.to_string(),

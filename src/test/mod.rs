@@ -30,7 +30,7 @@ async fn pull_request_event() {
     let api_addr = server.start().await;
 
     let client_id = "test_client_id";
-    let certificate = TlsCertificate::create("/tmp/cerberus-mergeguard_pull_request_event_test");
+    let certificate = TlsCertificate::create(None);
     let mut server_options = ServerOptions::default();
     server_options.port = 8900;
     let config = Configuration {
@@ -152,8 +152,7 @@ async fn check_run_event_incomplete() {
     let api_addr = server.start().await;
 
     let client_id = "test_client_id";
-    let certificate =
-        TlsCertificate::create("/tmp/cerberus-mergeguard_check_run_event_incomplete_test");
+    let certificate = TlsCertificate::create(None);
     let mut server_options = ServerOptions::default();
     server_options.port = 8901;
     let config = Configuration {
@@ -237,8 +236,7 @@ async fn check_run_event_ignore_own() {
     let api_addr = server.start().await;
 
     let client_id = "test_client_id";
-    let certificate =
-        TlsCertificate::create("/tmp/cerberus-mergeguard_check_run_event_ignore_own_test");
+    let certificate = TlsCertificate::create(None);
     let mut server_options = ServerOptions::default();
     server_options.port = 8902;
     let config = Configuration {
