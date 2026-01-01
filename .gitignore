@@ -4,6 +4,8 @@
 # Ignore files created for testing
 /test-*.yaml
 /*.pem
+/tests/e2e/testdata/**/*.key
+/tests/e2e/testdata/**/*.crt
 
 # Release build output
 /dist
