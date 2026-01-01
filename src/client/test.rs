@@ -4,6 +4,7 @@ use tokio::sync::Mutex;
 
 use super::*;
 use crate::testutils::{ExpectedRequests, MockGithubApiServer, TlsCertificate};
+use crate::types::App;
 
 #[tokio::test]
 async fn get_token_from_cache() {
@@ -135,4 +136,110 @@ async fn failed_to_get_token() {
     if let Ok(token) = client.get_token(app_id).await {
         panic!("Expected an error, but got token: {token}");
     }
+}
+
+#[test]
+fn test_overall_check_status_empty_list() {
+    let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
+
+    let (count, own_check_run) = client.overall_check_status(&Vec::new());
+    assert_eq!(0, count, "Should not count any check runs");
+    assert!(own_check_run.is_none(), "Should not have any own check run");
+}
+
+#[test]
+fn test_overall_check_status() {
+    let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
+    let check_runs = vec![
+        create_test_check_run(
+            "commit1",
+            "check-1",
+            "completed",
+            Some(CHECK_RUN_CONCLUSION.to_string()),
+            "other-app-id",
+        ),
+        create_test_check_run(
+            "commit1",
+            "check-2",
+            "completed",
+            Some(CHECK_RUN_SKIPPED.to_string()),
+            "other-app-id",
+        ),
+        create_test_check_run("commit1", "check-3", "pending", None, "other-app-id"),
+        create_test_check_run("commit1", "check-4", "completed", None, "other-app-id"),
+        create_test_check_run(
+            "commit1",
+            "check-5",
+            "completed",
+            Some("other-conclusion".to_string()),
+            "other-app-id",
+        ),
+    ];
+
+    let (count, own_check_run) = client.overall_check_status(&check_runs);
+    assert_eq!(3, count, "Should count unfinished and failed check runs");
+    assert!(own_check_run.is_none(), "Should not have any own check run");
+}
+
+#[test]
+fn test_overall_check_status_multiple_own_check_runs() {
+    let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
+    let check_runs = vec![
+        create_test_check_run(
+            "commit1",
+            "own-check-1",
+            "completed",
+            Some("success".to_string()),
+            &client.client_id,
+        ),
+        create_test_check_run(
+            "commit1",
+            "own-check-2",
+            "completed",
+            Some("failure".to_string()),
+            &client.client_id,
+        ),
+        create_test_check_run(
+            "commit1",
+            "other-check",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id",
+        ),
+        create_test_check_run(
+            "commit1",
+            "own-check-3",
+            "completed",
+            Some("failure".to_string()),
+            &client.client_id,
+        ),
+    ];
+
+    let (count, own_check_run) = client.overall_check_status(&check_runs);
+    assert_eq!(1, count, "Should count only other apps check runs");
+    let own_check_run = own_check_run.expect("Should have own check run");
+    assert_eq!(
+        "own-check-1", own_check_run.name,
+        "Should pick the first own check run"
+    );
+}
+
+fn create_test_check_run(
+    commit: &str,
+    name: &str,
+    status: &str,
+    conclusion: Option<String>,
+    client_id: &str,
+) -> CheckRun {
+    let mut check_run = CheckRun::new(commit);
+    check_run.name = name.to_string();
+    check_run.status = status.to_string();
+    check_run.conclusion = conclusion;
+    check_run.app = Some(App {
+        id: 0,
+        client_id: client_id.to_string(),
+        name: "Test App".to_string(),
+        slug: "".to_string(),
+    });
+    check_run
 }
