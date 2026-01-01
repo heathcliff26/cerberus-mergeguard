@@ -13,6 +13,8 @@ pub const CHECK_RUN_INITIAL_STATUS: &str = "queued";
 pub const CHECK_RUN_COMPLETED_STATUS: &str = "completed";
 /// Conclusion for completed check-runs from the bot
 pub const CHECK_RUN_CONCLUSION: &str = "success";
+/// Conclusion for skipped check-runs from the bot
+pub const CHECK_RUN_SKIPPED: &str = "skipped";
 /// Title for unfinished check-runs from the bot
 pub const CHECK_RUN_INITIAL_TITLE: &str = "Waiting for other checks to complete";
 /// Title for completed check-runs from the bot

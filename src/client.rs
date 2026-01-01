@@ -1,7 +1,7 @@
 use crate::{
     api,
     error::Error,
-    types::{CHECK_RUN_CONCLUSION, CheckRun, TokenResponse},
+    types::{CHECK_RUN_CONCLUSION, CHECK_RUN_SKIPPED, CheckRun, TokenResponse},
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -206,16 +206,17 @@ impl Client {
                 .is_some_and(|app| app.client_id == self.client_id)
             {
                 // This is a check run created by this app
-                if own_check_run.is_none() {
-                    own_check_run = Some(run.clone());
-                } else {
-                    warn!(
-                        "Found multiple check runs created by this app: '{}' and '{}, commit: '{}'",
-                        own_check_run.as_ref().unwrap().name,
-                        run.name,
-                        run.head_sha
-                    );
-                }
+                match own_check_run.as_ref() {
+                    None => {
+                        own_check_run = Some(run.clone());
+                    }
+                    Some(first) => {
+                        warn!(
+                            "Found multiple check runs created by this app: '{}' and '{}, commit: '{}'",
+                            first.name, run.name, run.head_sha
+                        );
+                    }
+                };
                 debug!("Found own check run: {}", run.id);
                 continue;
             }
@@ -224,7 +225,7 @@ impl Client {
                     if run
                         .conclusion
                         .as_ref()
-                        .is_some_and(|v| v == CHECK_RUN_CONCLUSION || v == "skipped")
+                        .is_some_and(|v| v == CHECK_RUN_CONCLUSION || v == CHECK_RUN_SKIPPED)
                     {
                         debug!("Check run '{}' is completed successfully", run.name);
                     } else {
