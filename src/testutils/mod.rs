@@ -200,13 +200,20 @@ impl Drop for TmpTestConfigFile {
 pub struct TlsCertificate {
     pub key: String,
     pub crt: String,
+    tmp_dir: tempfile::TempDir,
 }
 
 impl TlsCertificate {
     /// Create a self signed TLS certificate and key pair.
-    pub fn create(name: &str) -> Self {
-        let key = format!("{name}.key").to_string();
-        let crt = format!("{name}.crt").to_string();
+    pub fn create() -> Self {
+        let tmp_dir = tempfile::TempDir::with_prefix("cerberus-mergeguard")
+            .expect("Should create temporary directory");
+        let path = tmp_dir
+            .path()
+            .to_str()
+            .expect("Should get path of temporary directory");
+        let key = format!("{path}/tls.key").to_string();
+        let crt = format!("{path}/tls.crt").to_string();
         println!("Creating TLS certificate '{crt}' and key '{key}' ");
         let output = Command::new("openssl")
             .args([
@@ -245,7 +252,7 @@ impl TlsCertificate {
         }
 
         println!("TLS certificate created successfully.");
-        TlsCertificate { key, crt }
+        TlsCertificate { key, crt, tmp_dir }
     }
     /// Returns the certificate as a reqwest::tls::Certificate
     pub fn certificate(&self) -> reqwest::tls::Certificate {
@@ -257,13 +264,9 @@ impl TlsCertificate {
 
 impl Drop for TlsCertificate {
     fn drop(&mut self) {
-        println!("Removing TLS certificate: {}", self.crt);
-
-        let res_key = std::fs::remove_file(&self.key);
-        let res_crt = std::fs::remove_file(&self.crt);
-        res_key.expect("Failed to remove TLS key file");
-        res_crt.expect("Failed to remove TLS certificate file");
-
-        println!("TLS certificate removed successfully.");
+        println!(
+            "Removing TLS certificate directory: {}",
+            self.tmp_dir.path().display()
+        );
     }
 }
