@@ -9,7 +9,8 @@ static CONTAINER_IMAGE: &str = "localhost/cerberus-mergeguard:e2e-test";
 
 #[tokio::test]
 async fn container_image_healthcheck_http() {
-    let _cert = TlsCertificate::create("tests/e2e/testdata/http/testapp");
+    // Keep variables to ensure it is only dropped at the end of the test
+    let _cert = TlsCertificate::create(Some("tests/e2e/testdata/http/testapp"));
     let _container =
         RunningContainer::setup("cerberus-http", "8080:8080", "./tests/e2e/testdata/http/").await;
 
@@ -32,8 +33,9 @@ async fn container_image_healthcheck_http() {
 
 #[tokio::test]
 async fn container_image_healthcheck_https() {
-    let _app_cert = TlsCertificate::create("tests/e2e/testdata/https/testapp");
-    let server_cert = TlsCertificate::create("tests/e2e/testdata/https/server");
+    // Keep variables to ensure it is only dropped at the end of the test
+    let _app_cert = TlsCertificate::create(Some("tests/e2e/testdata/https/testapp"));
+    let server_cert = TlsCertificate::create(Some("tests/e2e/testdata/https/server"));
     let _container =
         RunningContainer::setup("cerberus-https", "8443:8443", "./tests/e2e/testdata/https/").await;
 

@@ -41,14 +41,16 @@ on:
     paths:
       - "Cargo.toml"
       - "Cargo.lock"
-      - "src/*"
+      - "src/**"
+      - "tests/**"
       - "Dockerfile"
   pull_request:
     branches: ["main"]
     paths:
       - "Cargo.toml"
       - "Cargo.lock"
-      - "src/*"
+      - "src/**"
+      - "tests/**"
       - "Dockerfile"
       - ".github/workflows/ci.yaml"
       - "README.md"

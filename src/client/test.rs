@@ -46,7 +46,7 @@ async fn get_new_token() {
 
     let api_server = MockGithubApiServer::new(expected_requests);
     let addr = api_server.start().await;
-    let certificate = TlsCertificate::create("/tmp/cerberus-mergeguard_new_token");
+    let certificate = TlsCertificate::create(None);
     let client = ClientOptions {
         client_id: "testid".to_string(),
         private_key: certificate.key.clone(),
@@ -78,7 +78,7 @@ async fn get_new_token_when_expired() {
 
     let api_server = MockGithubApiServer::new(expected_requests);
     let addr = api_server.start().await;
-    let certificate = TlsCertificate::create("/tmp/get_new_token_when_expired");
+    let certificate = TlsCertificate::create(None);
     let client = ClientOptions {
         client_id: "testid".to_string(),
         private_key: certificate.key.clone(),
@@ -125,7 +125,7 @@ async fn failed_to_get_token() {
 
     let api_server = MockGithubApiServer::new(expected_requests);
     let addr = api_server.start().await;
-    let certificate = TlsCertificate::create("/tmp/failed_to_get_token");
+    let certificate = TlsCertificate::create(None);
     let client = ClientOptions {
         client_id: "testid".to_string(),
         private_key: certificate.key.clone(),

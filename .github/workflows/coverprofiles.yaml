@@ -10,7 +10,8 @@ on:
     paths:
       - "Cargo.toml"
       - "Cargo.lock"
-      - "src/*"
+      - "src/**"
+      - "tests/**"
       - "README.md"
       - "hack/coverprofile.sh"
 
