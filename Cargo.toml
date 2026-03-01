@@ -51,7 +51,7 @@ tracing = { version = "0.1.44", features = [
     "release_max_level_debug",
 ] }
 tracing-subscriber = "0.3.22"
-rand = { version = "0.9.2", optional = true }
+rand = { version = "0.10.0", optional = true }
 chrono = { version = "0.4.43", default-features = false, features = [
     "std",
     "serde",
@@ -68,4 +68,4 @@ default = []
 e2e = ["dep:rand"]
 
 [dev-dependencies]
-rand = "0.9.2"
+rand = "0.10.0"
