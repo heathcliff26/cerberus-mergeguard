@@ -33,7 +33,7 @@ COPY --from=build-stage /app/target/release/cerberus-mergeguard /usr/local/bin/c
 
 WORKDIR /config
 
-USER 1001
+USER nobody:nobody
 
 ENTRYPOINT ["cerberus-mergeguard"]
 
