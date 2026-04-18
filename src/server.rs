@@ -9,7 +9,7 @@ use axum::{
     http::{HeaderMap, HeaderValue, StatusCode},
     routing::{get, post},
 };
-use hmac::{Hmac, Mac};
+use hmac::{Hmac, KeyInit, Mac};
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use std::sync::Arc;
