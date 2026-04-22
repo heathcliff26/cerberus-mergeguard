@@ -22,7 +22,7 @@ test:
 
 # Run e2e tests
 test-e2e:
-	cargo test --features e2e e2e
+	cargo test --features e2e --test e2e-testsuite
 
 # Generate coverage profile
 coverprofile:
