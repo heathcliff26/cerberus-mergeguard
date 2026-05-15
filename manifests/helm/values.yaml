@@ -18,11 +18,6 @@ config:
     port: 8080
 
     # Optional, can be omitted
-    # Environment variable: CERBERUS_WEBHOOK_SECRET
-    # The webhook secret shared with github. Is used to verify that the requests are coming from github.
-    webhook-secret: ""
-
-    # Optional, can be omitted
     # Set the interval in seconds in which the server should update check-runs.
     # This limits the number of api requests to github by bundling updates for multiple webhook events for the same commit.
     # When disabled, the server will update check-runs immediately after receiving a webhook event.
@@ -78,7 +73,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Define the environment of the container from secrets.
-# Should be used to inject the webhook secret
+# Should be used to inject the webhook secret as CERBERUS_WEBHOOK_SECRET
 envFrom: []
   # - secretRef:
   #   name: cerberus-mergeguard-webhook

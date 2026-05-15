@@ -23,7 +23,6 @@ spec:
     {{- range .Values.httpRoute.rules }}
     - backendRefs:
         - name: {{ include "cerberus-mergeguard.fullname" $ }}
-          namespace: {{ $.Release.Namespace }}
           port: {{ $.Values.service.port }}
     {{- with .matches }}
       matches:
