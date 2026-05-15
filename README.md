@@ -22,6 +22,8 @@ Instead of having empty runs, crazy bash magic or other tricks, you only need to
     - [Creating a github app](#creating-a-github-app)
     - [Installing your app](#installing-your-app)
     - [Running the bot](#running-the-bot)
+      - [Container](#container)
+      - [Kubernetes](#kubernetes)
     - [(Optional) Installing binary in CLI](#optional-installing-binary-in-cli)
   - [Credits](#credits)
 
@@ -97,6 +99,8 @@ In the "Installed App" tab install the app to your profile and select which repo
 
 ### Running the bot
 
+#### Container
+
 Before you run the bot, copy both the [example configuration](examples/config.yaml) and your app private key to a folder.
 
 Afterwards ensure you fill out all required attributes in the configuration file. The example has descriptions of the values.
@@ -105,6 +109,16 @@ Finally run the bot with
 ```bash
 podman run -d -p 8080:8080 -v /path/to/config/:/config/ ghcr.io/heathcliff26/cerberus-mergeguard:latest
 ```
+
+#### Kubernetes
+
+Helm charts are released via oci repos and can be installed with:
+```bash
+helm install cerberus-mergeguard oci://ghcr.io/heathcliff26/manifests/cerberus-mergeguard --version <version>
+```
+Please use the latest version from the releases page.
+
+Details on how to configure the helm chart can be found [here](manifests/helm/README.md).
 
 ### (Optional) Installing binary in CLI
 

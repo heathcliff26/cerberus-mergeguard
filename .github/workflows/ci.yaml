@@ -140,3 +140,21 @@ jobs:
       build-args: |
         CI_COMMIT_SHA=${{ github.sha }}
     secrets: inherit
+
+  push-helm:
+    uses: heathcliff26/ci/.github/workflows/push-helm-chart.yaml@main
+    if: ${{ inputs.release }}
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - extract-version
+      - doc
+      - lint
+      - test
+      - validate
+      - e2e
+    with:
+      tag: "${{ needs.extract-version.outputs.version }}"
+      dry-run: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || inputs.dry-run == 'true' }}
+    secrets: inherit
