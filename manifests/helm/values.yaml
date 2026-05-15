@@ -145,11 +145,11 @@ httpRoute:
   # Hostnames matching HTTP header.
   hostnames: []
   # List of rules and filters applied.
-  rules: []
-  # - matches:
-  #   - path:
-  #       type: PathPrefix
-  #       value: /echo
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
   #     headers:
   #     - name: version
   #       value: v2
