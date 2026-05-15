@@ -54,6 +54,7 @@ on:
       - "Dockerfile"
       - ".github/workflows/ci.yaml"
       - "README.md"
+      - "manifests/helm/**"
   merge_group:
     branches: ["main"]
 
