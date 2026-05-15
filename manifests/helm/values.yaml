@@ -77,6 +77,12 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Define the environment of the container from secrets.
+# Should be used to inject the webhook secret
+envFrom: []
+  # - secretRef:
+  #   name: cerberus-mergeguard-webhook
+
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
