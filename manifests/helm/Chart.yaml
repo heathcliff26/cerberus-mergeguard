@@ -1,0 +1,20 @@
+apiVersion: v2
+name: cerberus-mergeguard
+description: A Helm chart for cerberus-mergeguard - Block GitHub pull request merges until all status checks have passed
+type: application
+version: 0.1.0
+appVersion: "v0.0.0"
+home: https://github.com/heathcliff26/cerberus-mergeguard
+maintainers:
+  - name: heathcliff26
+    email: heathcliff@heathcliff.eu
+keywords:
+  - cerberus-mergeguard
+  - GitHub
+  - CI
+  - CI/CD
+  - Github Actions
+  - Github Workflow
+  - Check Runs
+sources:
+  - https://github.com/heathcliff26/cerberus-mergeguard

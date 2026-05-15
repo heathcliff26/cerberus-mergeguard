@@ -32,6 +32,10 @@ coverprofile:
 lint:
 	cargo clippy -- --deny warnings
 
+# Lint the helm charts
+lint-helm:
+	helm lint manifests/helm/
+
 # Build the docs, fail on warnings
 doc:
 	RUSTDOCFLAGS='--deny warnings' cargo doc --no-deps
@@ -64,6 +68,7 @@ help:
 	test-e2e \
 	coverprofile \
 	lint \
+	lint-helm \
 	doc \
 	fmt \
 	validate \
