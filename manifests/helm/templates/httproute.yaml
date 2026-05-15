@@ -23,8 +23,8 @@ spec:
     {{- range .Values.httpRoute.rules }}
     - backendRefs:
         - name: {{ include "cerberus-mergeguard.fullname" $ }}
+          namespace: {{ $.Release.Namespace }}
           port: {{ $.Values.service.port }}
-          weight: 1
     {{- with .matches }}
       matches:
       {{- toYaml . | nindent 8 }}
