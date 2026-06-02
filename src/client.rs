@@ -1,7 +1,7 @@
 use crate::{
     api,
     error::Error,
-    types::{CHECK_RUN_CONCLUSION, CHECK_RUN_SKIPPED, CheckRun, TokenResponse},
+    types::{CHECK_RUN_CONCLUSION, CHECK_RUN_NEUTRAL, CHECK_RUN_SKIPPED, CheckRun, TokenResponse},
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -222,11 +222,11 @@ impl Client {
             }
             match run.status.as_str() {
                 "completed" => {
-                    if run
-                        .conclusion
-                        .as_ref()
-                        .is_some_and(|v| v == CHECK_RUN_CONCLUSION || v == CHECK_RUN_SKIPPED)
-                    {
+                    if run.conclusion.as_ref().is_some_and(|v| {
+                        v == CHECK_RUN_CONCLUSION
+                            || v == CHECK_RUN_SKIPPED
+                            || v == CHECK_RUN_NEUTRAL
+                    }) {
                         debug!("Check run '{}' is completed successfully", run.name);
                     } else {
                         debug!(

@@ -174,6 +174,13 @@ fn test_overall_check_status() {
             Some("other-conclusion".to_string()),
             "other-app-id",
         ),
+        create_test_check_run(
+            "commit1",
+            "check-6",
+            "completed",
+            Some(CHECK_RUN_NEUTRAL.to_string()),
+            "other-app-id",
+        ),
     ];
 
     let (count, own_check_run) = client.overall_check_status(&check_runs);
