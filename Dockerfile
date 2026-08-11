@@ -1,7 +1,7 @@
 ###############################################################################
 # BEGIN build-stage
 # Compile the binary
-FROM docker.io/library/rust:1.97.0-alpine AS build-stage
+FROM docker.io/library/rust:1.97.1-alpine AS build-stage
 
 WORKDIR /app
 
