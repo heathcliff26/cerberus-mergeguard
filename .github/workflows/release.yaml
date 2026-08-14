@@ -29,7 +29,8 @@ jobs:
 
   tag:
     uses: heathcliff26/ci/.github/workflows/tag.yaml@main
-    needs: extract-version
+    needs:
+      - extract-version
     permissions:
       contents: write
     with:
@@ -39,7 +40,8 @@ jobs:
 
   build:
     uses: ./.github/workflows/ci.yaml
-    needs: tag
+    needs:
+      - tag
     permissions:
       contents: read
       packages: write
@@ -49,11 +51,24 @@ jobs:
       latest: ${{ inputs.latest }}
     secrets: inherit
 
+  push-helm:
+    uses: heathcliff26/ci/.github/workflows/push-helm-chart.yaml@main
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - build
+      - extract-version
+    with:
+      tag: ${{ needs.extract-version.outputs.version }}
+    secrets: inherit
+
   release:
     uses: heathcliff26/ci/.github/workflows/release.yaml@main
     needs:
       - build
       - extract-version
+      - push-helm
     permissions:
       contents: write
     with:
@@ -68,7 +83,9 @@ jobs:
   publish-crate:
     uses: heathcliff26/ci/.github/workflows/cargo-release.yaml@main
     if: ${{ inputs.draft == false && inputs.update == false }}
-    needs: build
+    needs:
+      - build
+      - push-helm
     permissions:
       contents: read
     secrets: inherit
