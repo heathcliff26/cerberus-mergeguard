@@ -1,7 +1,7 @@
 [![CI](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/ci.yaml/badge.svg?event=push)](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/ci.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/heathcliff26/cerberus-mergeguard/badge.svg)](https://coveralls.io/github/heathcliff26/cerberus-mergeguard)
 [![Editorconfig Check](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/editorconfig-check.yaml/badge.svg?event=push)](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/editorconfig-check.yaml)
-[![Generate test cover report](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/coverprofiles.yaml/badge.svg)](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/coverprofiles.yaml)
+[![Coverprofiles](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/coverprofiles.yaml/badge.svg)](https://github.com/heathcliff26/cerberus-mergeguard/actions/workflows/coverprofiles.yaml)
 
 # cerberus-mergeguard
 
