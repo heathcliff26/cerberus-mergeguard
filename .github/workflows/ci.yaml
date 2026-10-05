@@ -55,6 +55,7 @@ on:
       - ".github/workflows/ci.yaml"
       - "README.md"
       - "manifests/helm/**"
+      - "hack/**"
   merge_group:
     branches: ["main"]
 
@@ -120,6 +121,7 @@ jobs:
       artifact: "dist/cerberus-mergeguard-${{ matrix.arch }}"
       artifact-name: "cerberus-mergeguard-${{ matrix.arch }}"
       architecture: "${{ matrix.arch }}"
+      cache: true
 
   build-image:
     uses: heathcliff26/ci/.github/workflows/build-container.yaml@main
