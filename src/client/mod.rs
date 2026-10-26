@@ -190,7 +190,8 @@ impl Client {
     }
 
     /// Check a collection of check runs and returns the number of uncompleted check runs.
-    /// Additionally returns the check run created by this app. If there are multiple check-runs, the first will be returned.
+    /// Will ignore duplicates runs and only count the latest instance.
+    /// Additionally returns the check run created by this app. If there are multiple, the latest is returned.
     fn overall_check_status(&self, check_runs: &[CheckRun]) -> (u32, Option<CheckRun>) {
         if check_runs.is_empty() {
             warn!("Received empty check-runs list");
@@ -198,6 +199,7 @@ impl Client {
         }
         let mut uncompleted = 0;
         let mut own_check_run: Option<CheckRun> = None;
+        let mut latest_runs: HashMap<(Option<String>, String), CheckRun> = HashMap::new();
 
         for run in check_runs {
             if run
@@ -210,16 +212,32 @@ impl Client {
                     None => {
                         own_check_run = Some(run.clone());
                     }
-                    Some(first) => {
-                        warn!(
-                            "Found multiple check runs created by this app: '{}' and '{}, commit: '{}'",
-                            first.name, run.name, run.head_sha
-                        );
+                    Some(current) => {
+                        if current.id < run.id {
+                            own_check_run = Some(run.clone());
+                            debug!(
+                                "Found newer check run created by this app: '{}', commit: '{}'",
+                                run.id, run.head_sha
+                            )
+                        }
                     }
                 };
-                debug!("Found own check run: {}", run.id);
+                debug!(
+                    "Found own check run: '{}', commit: '{}'",
+                    run.id, run.head_sha
+                );
                 continue;
             }
+            let app_id = run.app.as_ref().map(|app| app.client_id.clone());
+            let key = (app_id, run.name.clone());
+            if let Some(current) = latest_runs.get(&key)
+                && current.id > run.id
+            {
+                continue;
+            }
+            latest_runs.insert(key, run.clone());
+        }
+        for (_, run) in latest_runs {
             match run.status.as_str() {
                 "completed" => {
                     if run.conclusion.as_ref().is_some_and(|v| {
@@ -227,10 +245,10 @@ impl Client {
                             || v == CHECK_RUN_SKIPPED
                             || v == CHECK_RUN_NEUTRAL
                     }) {
-                        debug!("Check run '{}' is completed successfully", run.name);
+                        debug!("Check run '{}' has completed successfully", run.name);
                     } else {
                         debug!(
-                            "Check run '{}' is completed not successfull: '{}'",
+                            "Check run '{}' has not completed successfully: '{}'",
                             run.name,
                             run.conclusion.as_deref().unwrap_or("unknown")
                         );
