@@ -1,6 +1,13 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 use clap::{Args, Parser, Subcommand};
 use tracing::Level;
+use tracing_subscriber::{
+    Layer,
+    filter::{LevelFilter, Targets},
+    fmt,
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+};
 
 mod client;
 mod config;
@@ -149,15 +156,16 @@ fn set_log_level(level: &str) {
             Level::INFO
         }
     };
-    let logger = tracing_subscriber::fmt()
-        .with_max_level(level)
-        .with_ansi(false);
-    #[cfg(not(test))]
-    logger.init();
+    let filter = Targets::new()
+        .with_target("cerberus_mergeguard", level)
+        .with_default(LevelFilter::OFF);
+    let logger = tracing_subscriber::registry().with(fmt::layer().with_filter(filter));
 
-    // We can only init the logger once, but testing might call the parent function multiple times.
+    // We can only initialize the logger once, but testing might call the parent function multiple times.
     #[cfg(test)]
     logger.try_init().unwrap_or_default();
+    #[cfg(not(test))]
+    logger.init();
 }
 
 async fn get_and_print_status(
