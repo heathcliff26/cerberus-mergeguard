@@ -152,6 +152,7 @@ fn test_overall_check_status() {
     let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
     let check_runs = vec![
         create_test_check_run(
+            1,
             "commit1",
             "check-1",
             "completed",
@@ -159,15 +160,17 @@ fn test_overall_check_status() {
             "other-app-id",
         ),
         create_test_check_run(
+            2,
             "commit1",
             "check-2",
             "completed",
             Some(CHECK_RUN_SKIPPED.to_string()),
             "other-app-id",
         ),
-        create_test_check_run("commit1", "check-3", "pending", None, "other-app-id"),
-        create_test_check_run("commit1", "check-4", "completed", None, "other-app-id"),
+        create_test_check_run(3, "commit1", "check-3", "pending", None, "other-app-id"),
+        create_test_check_run(4, "commit1", "check-4", "completed", None, "other-app-id"),
         create_test_check_run(
+            5,
             "commit1",
             "check-5",
             "completed",
@@ -175,6 +178,7 @@ fn test_overall_check_status() {
             "other-app-id",
         ),
         create_test_check_run(
+            6,
             "commit1",
             "check-6",
             "completed",
@@ -193,6 +197,7 @@ fn test_overall_check_status_multiple_own_check_runs() {
     let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
     let check_runs = vec![
         create_test_check_run(
+            1,
             "commit1",
             "own-check-1",
             "completed",
@@ -200,6 +205,7 @@ fn test_overall_check_status_multiple_own_check_runs() {
             &client.client_id,
         ),
         create_test_check_run(
+            2,
             "commit1",
             "own-check-2",
             "completed",
@@ -207,6 +213,7 @@ fn test_overall_check_status_multiple_own_check_runs() {
             &client.client_id,
         ),
         create_test_check_run(
+            3,
             "commit1",
             "other-check",
             "completed",
@@ -214,6 +221,7 @@ fn test_overall_check_status_multiple_own_check_runs() {
             "other-app-id",
         ),
         create_test_check_run(
+            4,
             "commit1",
             "own-check-3",
             "completed",
@@ -225,13 +233,101 @@ fn test_overall_check_status_multiple_own_check_runs() {
     let (count, own_check_run) = client.overall_check_status(&check_runs);
     assert_eq!(1, count, "Should count only other apps check runs");
     let own_check_run = own_check_run.expect("Should have own check run");
-    assert_eq!(
-        "own-check-1", own_check_run.name,
-        "Should pick the first own check run"
-    );
+    assert_eq!(4, own_check_run.id, "Should pick the latest own check run");
+}
+
+#[test]
+fn test_overall_check_status_duplicate_check_runs() {
+    let client = Client::new_for_testing("own-app-id", "some-secret", "some-addr");
+    let check_runs = vec![
+        create_test_check_run(
+            2,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-1",
+        ),
+        create_test_check_run(
+            3,
+            "commit1",
+            "other-check-2",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-1",
+        ),
+        create_test_check_run(
+            4,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-2",
+        ),
+        create_test_check_run(
+            5,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-1",
+        ),
+    ];
+
+    let (count, own_check_run) = client.overall_check_status(&check_runs);
+    assert_eq!(3, count, "Should ignore duplicate check run");
+    assert!(own_check_run.is_none(), "Should not have own check run");
+
+    let check_runs = vec![
+        create_test_check_run(
+            2,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-1",
+        ),
+        create_test_check_run(
+            3,
+            "commit1",
+            "other-check-2",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-1",
+        ),
+        create_test_check_run(
+            4,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("failure".to_string()),
+            "other-app-id-2",
+        ),
+        create_test_check_run(
+            5,
+            "commit1",
+            "other-check-1",
+            "completed",
+            Some("success".to_string()),
+            "other-app-id-1",
+        ),
+        create_test_check_run(
+            6,
+            "commit1",
+            "other-check-2",
+            "completed",
+            Some("success".to_string()),
+            "other-app-id-1",
+        ),
+    ];
+
+    let (count, own_check_run) = client.overall_check_status(&check_runs);
+    assert_eq!(1, count, "Should ignore duplicate check run");
+    assert!(own_check_run.is_none(), "Should not have own check run");
 }
 
 fn create_test_check_run(
+    id: u64,
     commit: &str,
     name: &str,
     status: &str,
@@ -239,6 +335,7 @@ fn create_test_check_run(
     client_id: &str,
 ) -> CheckRun {
     let mut check_run = CheckRun::new(commit);
+    check_run.id = id;
     check_run.name = name.to_string();
     check_run.status = status.to_string();
     check_run.conclusion = conclusion;
