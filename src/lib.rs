@@ -2,7 +2,6 @@
 use clap::{Args, Parser, Subcommand};
 use tracing::Level;
 
-mod api;
 mod client;
 mod config;
 mod error;

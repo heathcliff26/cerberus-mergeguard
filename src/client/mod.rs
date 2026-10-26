@@ -1,5 +1,4 @@
 use crate::{
-    api,
     error::Error,
     types::{
         CHECK_RUN_COMPLETED_STATUS, CHECK_RUN_CONCLUSION, CHECK_RUN_NEUTRAL, CHECK_RUN_SKIPPED,
@@ -10,6 +9,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tokio::sync::Mutex;
 use tracing::{debug, warn};
+
+mod api;
 
 #[cfg(test)]
 mod test;
