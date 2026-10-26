@@ -1,7 +1,10 @@
 use crate::{
     api,
     error::Error,
-    types::{CHECK_RUN_CONCLUSION, CHECK_RUN_NEUTRAL, CHECK_RUN_SKIPPED, CheckRun, TokenResponse},
+    types::{
+        CHECK_RUN_COMPLETED_STATUS, CHECK_RUN_CONCLUSION, CHECK_RUN_NEUTRAL, CHECK_RUN_SKIPPED,
+        CheckRun, TokenResponse,
+    },
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -146,11 +149,21 @@ impl Client {
 
         match check_run {
             Some(mut run) => {
-                if run.update_status(count) {
-                    api::update_check_run(&self.api, &token, repo, &run).await
-                } else {
+                let create = run.status == CHECK_RUN_COMPLETED_STATUS;
+                if !run.update_status(count) {
                     debug!("No changes to check run status, skipping update");
-                    Ok(())
+                    return Ok(());
+                }
+                if create {
+                    debug!(
+                        "Changes detected but current status is completed, creating a check run"
+                    );
+                    let mut run = CheckRun::new(commit);
+                    run.update_status(count);
+                    api::create_check_run(&self.api, &token, repo, &run).await
+                } else {
+                    debug!("Changes detected, updating check run status");
+                    api::update_check_run(&self.api, &token, repo, &run).await
                 }
             }
             None => {
