@@ -1,5 +1,27 @@
 # Changelog
 
+Version v0.5.7
+--------------------
+Released: 2026-10-26
+
+🐛 Bug Fixes:
+- *(ci)* Install grcov from upstream release
+- Only check the latest check run
+- Create new check when old one is completed
+- *(container)* Update image docker.io/library/rust to v1.99.1
+- *(container)* Update image docker.io/library/alpine to v3.24.3
+- Suppress logging from other crates
+
+🚜 Refactor:
+- Move modules into subfolders
+- Move api under client
+
+⚙️ Miscellaneous Tasks:
+- Synced file(s) with heathcliff26/ci
+- Synced file(s) with heathcliff26/ci
+- Synced file(s) with heathcliff26/ci
+- Bump rustls to 0.23.46
+
 Version v0.5.6
 --------------------
 Released: 2026-10-12
@@ -13,6 +35,7 @@ Released: 2026-10-12
 ⚙️ Miscellaneous Tasks:
 - Add automatic version update
 - Check for conventional commit messages
+- *(release)* Bump crate version to v0.5.6
 
 💼 Other:
 - Changes release workflow default settings
