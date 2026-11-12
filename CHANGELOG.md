@@ -1,5 +1,12 @@
 # Changelog
 
+Version v0.5.8
+--------------------
+Released: 2026-11-12
+
+⚙️ Miscellaneous Tasks:
+- *(container)* Update image docker.io/library/alpine to v3.24.4
+
 Version v0.5.7
 --------------------
 Released: 2026-10-26
@@ -21,6 +28,7 @@ Released: 2026-10-26
 - Synced file(s) with heathcliff26/ci
 - Synced file(s) with heathcliff26/ci
 - Bump rustls to 0.23.46
+- *(release)* Bump crate version to v0.5.7
 
 Version v0.5.6
 --------------------

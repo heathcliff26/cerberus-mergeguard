@@ -190,7 +190,7 @@ dependencies = [
 
 [[package]]
 name = "cerberus-mergeguard"
-version = "0.5.7"
+version = "0.5.8"
 dependencies = [
  "axum",
  "chrono",
