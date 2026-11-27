@@ -7,7 +7,7 @@
     <body>
         <div class="container">
     <nav class="breadcrumb is-right" aria-label="breadcrumbs">
-        <ul><li><a href="../../index.html">top_level</a></li><li><a href="./index.html">src&#x2F;client</a></li><li class="is-active"><a href="#">api.rs</a></li>
+        <ul><li><a href="../../index.html">top_level</a></li><li><a href="./index.html">src/client</a></li><li class="is-active"><a href="#">api.rs</a></li>
         </ul>
     </nav>
     <nav class="level">
@@ -32,7 +32,7 @@
         <div>
             <p class="heading">Branches</p>
             <p class="title has-text-success">
-                <abbr title="0 / 0">100 %</abbr></p>
+                <abbr title="0 / 0">100.0 %</abbr></p>
         </div>
     </div>
 
@@ -133,7 +133,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Get an installation token for the GitHub App.</pre>
+                <pre class="has-background-white py-0 px-2">/// Get an installation token for the GitHub App.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -149,7 +149,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; API endpoint: POST &#x2F;app&#x2F;installations&#x2F;{installation_id}&#x2F;access_tokens</pre>
+                <pre class="has-background-white py-0 px-2">/// API endpoint: POST /app/installations/{installation_id}/access_tokens</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -245,7 +245,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}&#x2F;app&#x2F;installations&#x2F;{installation_id}&#x2F;access_tokens&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}/app/installations/{installation_id}/access_tokens&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -261,7 +261,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching installation token from &#x27;{url}&#x27;&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching installation token from &#39;{url}&#39;&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -469,7 +469,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Fetch all check runs for a commit.</pre>
+                <pre class="has-background-white py-0 px-2">/// Fetch all check runs for a commit.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -485,7 +485,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; API endpoint: GET &#x2F;repos&#x2F;{owner}&#x2F;{repo}&#x2F;commits&#x2F;{ref}&#x2F;check-runs</pre>
+                <pre class="has-background-white py-0 px-2">/// API endpoint: GET /repos/{owner}/{repo}/commits/{ref}/check-runs</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -597,7 +597,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}&#x2F;repos&#x2F;{repo}&#x2F;commits&#x2F;{commit}&#x2F;check-runs&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}/repos/{repo}/commits/{commit}/check-runs&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -613,7 +613,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching check runs from &#x27;{url}&#x27;&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching check runs from &#39;{url}&#39;&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -757,7 +757,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#x27;{}&#x27;&quot;, response);</pre>
+                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#39;{}&#39;&quot;, response);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -885,7 +885,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Create a check run for a specific commit.</pre>
+                <pre class="has-background-white py-0 px-2">/// Create a check run for a specific commit.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -901,7 +901,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; API endpoint: POST &#x2F;repos&#x2F;{owner}&#x2F;{repo}&#x2F;check-runs</pre>
+                <pre class="has-background-white py-0 px-2">/// API endpoint: POST /repos/{owner}/{repo}/check-runs</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1013,7 +1013,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}&#x2F;repos&#x2F;{repo}&#x2F;check-runs&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}/repos/{repo}/check-runs&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1029,7 +1029,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Creating check-run for &#x27;{}&#x27; at &#x27;{url}&#x27;&quot;, payload.head_sha);</pre>
+                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Creating check-run for &#39;{}&#39; at &#39;{url}&#39;&quot;, payload.head_sha);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1173,7 +1173,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">                &quot;Created check-run &#x27;{}&#x27; for commit &#x27;{}&#x27;&quot;,</pre>
+                <pre class="has-background-white py-0 px-2">                &quot;Created check-run &#39;{}&#39; for commit &#39;{}&#39;&quot;,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1269,7 +1269,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#x27;{}&#x27;&quot;, response);</pre>
+                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#39;{}&#39;&quot;, response);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1365,7 +1365,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Update a check run for a specific commit.</pre>
+                <pre class="has-background-white py-0 px-2">/// Update a check run for a specific commit.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1381,7 +1381,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; API endpoint: PATCH &#x2F;repos&#x2F;{owner}&#x2F;{repo}&#x2F;check-runs&#x2F;{check_run_id}</pre>
+                <pre class="has-background-white py-0 px-2">/// API endpoint: PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1493,7 +1493,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">    let url = format!(&quot;{endpoint}&#x2F;repos&#x2F;{repo}&#x2F;check-runs&#x2F;{}&quot;, payload.id);</pre>
+                <pre class="has-background-danger-light py-0 px-2">    let url = format!(&quot;{endpoint}/repos/{repo}/check-runs/{}&quot;, payload.id);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1509,7 +1509,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">    info!(&quot;Updating check-run for &#x27;{}&#x27; at &#x27;{url}&#x27;&quot;, payload.head_sha);</pre>
+                <pre class="has-background-danger-light py-0 px-2">    info!(&quot;Updating check-run for &#39;{}&#39; at &#39;{url}&#39;&quot;, payload.head_sha);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1653,7 +1653,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">                &quot;Updated check-run &#x27;{}&#x27; for commit &#x27;{}&#x27;&quot;,</pre>
+                <pre class="has-background-white py-0 px-2">                &quot;Updated check-run &#39;{}&#39; for commit &#39;{}&#39;&quot;,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1749,7 +1749,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#x27;{}&#x27;&quot;, response);</pre>
+                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#39;{}&#39;&quot;, response);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1845,7 +1845,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Get the current status of a pull request.</pre>
+                <pre class="has-background-white py-0 px-2">/// Get the current status of a pull request.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1861,7 +1861,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; API endpoint: GET &#x2F;repos&#x2F;{owner}&#x2F;{repo}&#x2F;pulls&#x2F;{pull_number}</pre>
+                <pre class="has-background-white py-0 px-2">/// API endpoint: GET /repos/{owner}/{repo}/pulls/{pull_number}</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1973,7 +1973,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}&#x2F;repos&#x2F;{repo}&#x2F;pulls&#x2F;{pull_number}&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    let url = format!(&quot;{endpoint}/repos/{repo}/pulls/{pull_number}&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1989,7 +1989,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching pull request from &#x27;{url}&#x27;&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">    info!(&quot;Fetching pull request from &#39;{url}&#39;&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2133,7 +2133,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#x27;{}&#x27;&quot;, response);</pre>
+                <pre class="has-background-danger-light py-0 px-2">            debug!(&quot;Response body: &#39;{}&#39;&quot;, response);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2293,7 +2293,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        HeaderValue::from_static(&quot;application&#x2F;vnd.github+json&quot;),</pre>
+                <pre class="has-background-success-light py-0 px-2">        HeaderValue::from_static(&quot;application/vnd.github+json&quot;),</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2709,7 +2709,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">            &quot;Request failed with: status=&#x27;{}&#x27;, body=&#x27;{}&#x27;&quot;,</pre>
+                <pre class="has-background-white py-0 px-2">            &quot;Request failed with: status=&#39;{}&#39;, body=&#39;{}&#39;&quot;,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2892,7 +2892,7 @@
         <footer class="footer">
             
                 <div class="content has-text-centered">
-                    <p class="heading">Date: 2026-11-20 15:34</p>
+                    <p class="heading">Date: 2026-11-27 06:30</p>
                 </div>
             
         </footer>

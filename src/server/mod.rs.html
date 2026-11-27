@@ -7,7 +7,7 @@
     <body>
         <div class="container">
     <nav class="breadcrumb is-right" aria-label="breadcrumbs">
-        <ul><li><a href="../../index.html">top_level</a></li><li><a href="./index.html">src&#x2F;server</a></li><li class="is-active"><a href="#">mod.rs</a></li>
+        <ul><li><a href="../../index.html">top_level</a></li><li><a href="./index.html">src/server</a></li><li class="is-active"><a href="#">mod.rs</a></li>
         </ul>
     </nav>
     <nav class="level">
@@ -32,7 +32,7 @@
         <div>
             <p class="heading">Branches</p>
             <p class="title has-text-success">
-                <abbr title="0 / 0">100 %</abbr></p>
+                <abbr title="0 / 0">100.0 %</abbr></p>
         </div>
     </div>
 
@@ -501,7 +501,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Options for the http server</pre>
+                <pre class="has-background-white py-0 px-2">/// Options for the http server</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -565,7 +565,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Port to bind to, defaults to 8080</pre>
+                <pre class="has-background-white py-0 px-2">    /// Port to bind to, defaults to 8080</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -629,7 +629,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Optional ssl configuration for the server</pre>
+                <pre class="has-background-white py-0 px-2">    /// Optional ssl configuration for the server</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -677,7 +677,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Shared webhook secret for verifying the webhook sender</pre>
+                <pre class="has-background-white py-0 px-2">    /// Shared webhook secret for verifying the webhook sender</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -725,7 +725,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Refresh check runs periodically instead of on every webhook event</pre>
+                <pre class="has-background-white py-0 px-2">    /// Refresh check runs periodically instead of on every webhook event</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -741,7 +741,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; This is useful for reducing the number of API calls to GitHub.</pre>
+                <pre class="has-background-white py-0 px-2">    /// This is useful for reducing the number of API calls to GitHub.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -757,7 +757,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; When set to zero, periodic refresh is disabled.</pre>
+                <pre class="has-background-white py-0 px-2">    /// When set to zero, periodic refresh is disabled.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -773,7 +773,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Unit is in seconds.</pre>
+                <pre class="has-background-white py-0 px-2">    /// Unit is in seconds.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -933,7 +933,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Validate the server options</pre>
+                <pre class="has-background-white py-0 px-2">    /// Validate the server options</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -949,7 +949,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    pub fn validate(&amp;self) -&gt; Result&lt;(), &amp;&#x27;static str&gt; {</pre>
+                <pre class="has-background-success-light py-0 px-2">    pub fn validate(&amp;self) -&gt; Result&lt;(), &amp;&#39;static str&gt; {</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -981,7 +981,7 @@
             </div>
             <div class="column has-background-danger-light p-0"
                  role="cell">
-                <pre class="has-background-danger-light py-0 px-2">            return Err(&quot;Port can&#x27;t be 0&quot;);</pre>
+                <pre class="has-background-danger-light py-0 px-2">            return Err(&quot;Port can&#39;t be 0&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1253,7 +1253,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; SSL configuration for the server</pre>
+                <pre class="has-background-white py-0 px-2">/// SSL configuration for the server</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1317,7 +1317,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Whether to enable SSL, defaults to false</pre>
+                <pre class="has-background-white py-0 px-2">    /// Whether to enable SSL, defaults to false</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1349,7 +1349,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Path to the SSL private key file</pre>
+                <pre class="has-background-white py-0 px-2">    /// Path to the SSL private key file</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1381,7 +1381,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Path to the SSL certificate file</pre>
+                <pre class="has-background-white py-0 px-2">    /// Path to the SSL certificate file</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1461,7 +1461,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Validate the SSL options</pre>
+                <pre class="has-background-white py-0 px-2">    /// Validate the SSL options</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1477,7 +1477,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    pub fn validate(&amp;self) -&gt; Result&lt;(), &amp;&#x27;static str&gt; {</pre>
+                <pre class="has-background-success-light py-0 px-2">    pub fn validate(&amp;self) -&gt; Result&lt;(), &amp;&#39;static str&gt; {</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1653,7 +1653,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Job for refreshing check runs</pre>
+                <pre class="has-background-white py-0 px-2">/// Job for refreshing check runs</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -1781,7 +1781,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; HTTP Server for receiving webhook events from GitHub</pre>
+                <pre class="has-background-white py-0 px-2">/// HTTP Server for receiving webhook events from GitHub</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2005,7 +2005,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Create a new server state with the given webhook secret and GitHub client</pre>
+                <pre class="has-background-white py-0 px-2">    /// Create a new server state with the given webhook secret and GitHub client</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2181,7 +2181,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Create a new pending job and add it to the job queue</pre>
+                <pre class="has-background-white py-0 px-2">    /// Create a new pending job and add it to the job queue</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2357,7 +2357,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Start a background task that periodically runs all jobs in the queue</pre>
+                <pre class="has-background-white py-0 px-2">    /// Start a background task that periodically runs all jobs in the queue</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2853,7 +2853,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">                            &quot;Failed to refresh check run status for job: &#x27;{}&#x27; - &#x27;{}&#x27;: {}&quot;,</pre>
+                <pre class="has-background-white py-0 px-2">                            &quot;Failed to refresh check run status for job: &#39;{}&#39; - &#39;{}&#39;: {}&quot;,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3029,7 +3029,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Create a new server with the given options and GitHub client</pre>
+                <pre class="has-background-white py-0 px-2">    /// Create a new server with the given options and GitHub client</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3109,7 +3109,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Run the server</pre>
+                <pre class="has-background-white py-0 px-2">    /// Run the server</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3125,7 +3125,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Server will shutdown gracefully on Ctrl+C or SIGTERM</pre>
+                <pre class="has-background-white py-0 px-2">    /// Server will shutdown gracefully on Ctrl+C or SIGTERM</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3701,7 +3701,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        .route(&quot;&#x2F;webhook&quot;, post(webhook_handler))</pre>
+                <pre class="has-background-success-light py-0 px-2">        .route(&quot;/webhook&quot;, post(webhook_handler))</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3765,7 +3765,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F; Do not use tracing for the health check endpoint</pre>
+                <pre class="has-background-white py-0 px-2">    // Do not use tracing for the health check endpoint</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3781,7 +3781,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let health_router: Router = Router::new().route(&quot;&#x2F;healthz&quot;, get(healthz));</pre>
+                <pre class="has-background-success-light py-0 px-2">    let health_router: Router = Router::new().route(&quot;/healthz&quot;, get(healthz));</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3861,7 +3861,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Expose health check endpoint</pre>
+                <pre class="has-background-white py-0 px-2">/// Expose health check endpoint</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3877,7 +3877,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Can be used when running under kubernetes to check if the server is running</pre>
+                <pre class="has-background-white py-0 px-2">/// Can be used when running under kubernetes to check if the server is running</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3893,7 +3893,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; GET &#x2F;healthz</pre>
+                <pre class="has-background-white py-0 px-2">/// GET /healthz</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3973,7 +3973,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Handle the webhook events send from GitHub</pre>
+                <pre class="has-background-white py-0 px-2">/// Handle the webhook events send from GitHub</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3989,7 +3989,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; POST &#x2F;webhook</pre>
+                <pre class="has-background-white py-0 px-2">/// POST /webhook</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -4485,7 +4485,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        &quot;check_suite&quot; =&gt; (StatusCode::OK, Json(Response::new())), &#x2F;&#x2F; Ignore check_suite events</pre>
+                <pre class="has-background-success-light py-0 px-2">        &quot;check_suite&quot; =&gt; (StatusCode::OK, Json(Response::new())), // Ignore check_suite events</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -4629,7 +4629,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Verify the webhook request against the shared secret</pre>
+                <pre class="has-background-white py-0 px-2">/// Verify the webhook request against the shared secret</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -5509,7 +5509,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Handle webhook pull_request events</pre>
+                <pre class="has-background-white py-0 px-2">/// Handle webhook pull_request events</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -6357,7 +6357,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Handle webhook check_run events</pre>
+                <pre class="has-background-white py-0 px-2">/// Handle webhook check_run events</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -7381,7 +7381,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Handle webhook issue_comment events</pre>
+                <pre class="has-background-white py-0 px-2">/// Handle webhook issue_comment events</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -7941,7 +7941,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    if !payload.comment.body.contains(&quot;&#x2F;cerberus refresh&quot;) {</pre>
+                <pre class="has-background-success-light py-0 px-2">    if !payload.comment.body.contains(&quot;/cerberus refresh&quot;) {</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -7957,7 +7957,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        debug!(&quot;Ignoring issue comment without &#x27;&#x2F;cerberus&#x27; command&quot;);</pre>
+                <pre class="has-background-success-light py-0 px-2">        debug!(&quot;Ignoring issue comment without &#39;/cerberus&#39; command&quot;);</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8533,7 +8533,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Detailed status of the Webserver</pre>
+                <pre class="has-background-white py-0 px-2">/// Detailed status of the Webserver</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8581,7 +8581,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Status of the server.</pre>
+                <pre class="has-background-white py-0 px-2">    /// Status of the server.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8597,7 +8597,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; &quot;ok&quot; if everything is running fine, &quot;error&quot; if something is wrong.</pre>
+                <pre class="has-background-white py-0 px-2">    /// &quot;ok&quot; if everything is running fine, &quot;error&quot; if something is wrong.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8629,7 +8629,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Optional message providing more details about the status.</pre>
+                <pre class="has-background-white py-0 px-2">    /// Optional message providing more details about the status.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8709,7 +8709,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Create a new response with ok status.</pre>
+                <pre class="has-background-white py-0 px-2">    /// Create a new response with ok status.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8837,7 +8837,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">    &#x2F;&#x2F;&#x2F; Create a new response with the error status.</pre>
+                <pre class="has-background-white py-0 px-2">    /// Create a new response with the error status.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -8981,7 +8981,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Asynchronously wait for a shutdown signal (Ctrl+C or SIGTERM).</pre>
+                <pre class="has-background-white py-0 px-2">/// Asynchronously wait for a shutdown signal (Ctrl+C or SIGTERM).</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -9381,7 +9381,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Remove duplicates from job queue</pre>
+                <pre class="has-background-white py-0 px-2">/// Remove duplicates from job queue</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -9452,7 +9452,7 @@
         <footer class="footer">
             
                 <div class="content has-text-centered">
-                    <p class="heading">Date: 2026-11-20 15:34</p>
+                    <p class="heading">Date: 2026-11-27 06:30</p>
                 </div>
             
         </footer>
